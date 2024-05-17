@@ -1,16 +1,20 @@
 import { Request, Response } from "express";
-import Menu from "../model/menu";
+import Product from "../model/product";
 import { IMenu } from "../interface/IMenu";
 
 const createItem = async (request: Request, response: Response) => {
-  const { name, price, category, imageUrl } = request.body as IMenu;
+  const { name, price, category, description } = request.body as IMenu;
+
+  const imageUrl = request.file?.filename;
+  console.log(imageUrl);
 
   try {
-    const item = await Menu.create({
+    const item = await Product.create({
       name,
       price,
       category,
       imageUrl,
+      description,
     });
 
     return response.status(200).json(item);
@@ -23,7 +27,7 @@ const createItem = async (request: Request, response: Response) => {
 
 const getMenu = async (request: Request, response: Response) => {
   try {
-    const menu = await Menu.find({});
+    const menu = await Product.find({});
 
     return response.status(200).json(menu);
   } catch (error) {
@@ -35,12 +39,12 @@ const deleteItem = async (request: Request, response: Response) => {
   const { id } = request.query;
 
   try {
-    const item = await Menu.findById({ _id: id });
+    const item = await Product.findById({ _id: id });
 
     if (!item)
       return response.status(400).json({ error: "Item não encontrado." });
 
-    await Menu.deleteOne({ _id: id });
+    await Product.deleteOne({ _id: id });
 
     return response.status(200).json({ message: "Item deletado com sucesso." });
   } catch (error) {
@@ -53,7 +57,7 @@ const updateItem = async (request: Request, response: Response) => {
   const { name, category, price, imageUrl } = request.body as IMenu;
 
   try {
-    const item = await Menu.findById({ _id: id }).exec();
+    const item = await Product.findById({ _id: id }).exec();
 
     if (!item)
       return response.status(400).json({ error: "Item não encontrado." });

@@ -1,16 +1,18 @@
 import express, { Express } from "express";
 import userRouter from "./routes/userRoutes";
-import menuRoutes from "./routes/menuRoutes";
+import productRoutes from "./routes/productRoutes";
 import main from "./config/db";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app: Express = express();
 
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/user", userRouter);
-app.use("/menu", menuRoutes);
+app.use("/product", productRoutes);
 
 main();
 

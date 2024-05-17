@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const register = async (request: Request, response: Response) => {
-  const { name, email, password, confirmPassword }: IUser = request.body;
+  const { name, email, role, password, confirmPassword }: IUser = request.body;
 
   try {
     const userExist = await User.findOne({ email });
@@ -25,7 +25,12 @@ const register = async (request: Request, response: Response) => {
 
     const newPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ name, email, password: newPassword });
+    const user = await User.create({
+      name,
+      email,
+      password: newPassword,
+      role: role || "client",
+    });
 
     return response.status(200).json(user);
   } catch (error) {
