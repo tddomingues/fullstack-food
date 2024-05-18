@@ -26,23 +26,35 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <main className="px-32 py-8">
-        <ProductCard products={products} />
-        <div className="mt-16 flex justify-center bg-red-400 relative h-[400px] rounded-md ">
-          <div className="absolute bg-neutral-900 py-4 px-8 top-[-20px] cursor-pointer z-30 ">
-            <span className="text-neutral-50 text-xl">
-              <NavLink to="/menu" className="">
-                Menu
-              </NavLink>
-            </span>
+
+      <main className="py-10 px-32 ">
+        <section className="flex justify-between gap-4">
+          <div>
+            <div className="rounded-md border-[1px] border-neutral-400 bg-neutral-100">
+              <input
+                type="text"
+                name=""
+                id=""
+                placeholder="Pesquisar"
+                className="p-2 text-neutral-800"
+              />
+            </div>
+            <div className="mt-12 bg-neutral-100 rounded-md border-[1px] border-neutral-400 p-2">
+              <h3 className="mb-6 text-xl font-semibold">Categorias</h3>
+              <ul className="flex flex-col gap-4">
+                <li className="cursor-pointer">Todos</li>
+                <li className="cursor-pointer">Hamburgueres</li>
+                <li className="cursor-pointer">Pizzas</li>
+                <li className="cursor-pointer">Bebidas</li>
+              </ul>
+            </div>
           </div>
-          <img
-            src={BackgroundBurguer}
-            alt=""
-            className="w-full object-cover object-center rounded-md "
-          />
-          <div className="absolute w-full h-full bg-gradient-to-t from-neutral-900/60 to-neutral-900/40 rounded-md"></div>
-        </div>
+          <div className="flex-1">
+            <div className="rounded-md  ">
+              <ProductCard products={products} />
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );

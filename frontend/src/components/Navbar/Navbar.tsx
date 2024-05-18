@@ -1,8 +1,18 @@
 import { FaCartShopping } from "react-icons/fa6";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import Cart from "../Cart/Cart";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+  const [activateCart, setActivateCart] = useState(false);
+
+  const openCart = () => {
+    setActivateCart(true);
+  };
+
   return (
     <header className="flex justify-between items-center py-5 px-32 bg-neutral-50">
       <NavLink to="/">Logo</NavLink>
@@ -17,22 +27,21 @@ const Navbar = () => {
 
       <ul className="flex items-center gap-4">
         <li>
-          <Button variant="ghost">Entrar</Button>
+          <Button variant="ghost" onClick={() => navigate("/login")}>
+            Entrar
+          </Button>
         </li>
         <li>
           <Button variant="destructive">Cadastrar</Button>
         </li>
-        <li>
+        {/* <li>
           <NavLink to="/admin-painel">Admin</NavLink>
         </li>
         <li className="mr-5 transition ease-in-out delay-100 hover:text-destructive ">
           <NavLink to="/perfil">Perfil</NavLink>
-        </li>
-        <li>
-          <FaCartShopping
-            className="text-destructive hover:text-destructive/90 cursor-pointer"
-            size={20}
-          />
+        </li> */}
+        <li className="relative cursor-pointer">
+          <Cart />
         </li>
       </ul>
     </header>

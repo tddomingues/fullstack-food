@@ -1,0 +1,48 @@
+<div className="flex flex-col gap-3 border-t pt-3">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <div className="w-[80px] border border-neutral-200 rounded-md ">
+                          <img src={BurgerImage} alt="" />
+                        </div>
+                        <div className="">
+                          <h4 className="font-semibold">Nome do item</h4>
+                          <strong className="font-semibold">RS 231,32</strong>
+                        </div>
+                      </div>
+
+                      <div className="border border-neutral-200 rounded-md flex items-center justify-between gap-6 p-1 min-w-[80px]">
+                        <span>213</span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="cursor-pointer bg-neutral-200">
+                            <IoMdArrowDropup />
+                          </span>
+                          <span className="cursor-pointer bg-neutral-200">
+                            <IoMdArrowDropdown />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <div className="w-[80px] border border-neutral-200 rounded-md ">
+                          <img src={BurgerImage} alt="" />
+                        </div>
+                        <div className="">
+                          <h4 className="font-semibold">Nome do item</h4>
+                          <strong className="font-semibold">RS 231,32</strong>
+                        </div>
+                      </div>
+
+                      <div className="border border-neutral-200 rounded-md flex items-center justify-between gap-6 p-1 min-w-[80px]">
+                        <span>213</span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="cursor-pointer bg-neutral-200">
+                            <IoMdArrowDropup />
+                          </span>
+                          <span className="cursor-pointer bg-neutral-200">
+                            <IoMdArrowDropdown />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
