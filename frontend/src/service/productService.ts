@@ -4,9 +4,19 @@ const api = axios.create({
   baseURL: "http://localhost:3000/product",
 });
 
-const getProducts = async () => {
+const getAllProducts = async () => {
   try {
     const products = await api.get("/getProducts");
+
+    return products.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getProductsByCategory = async (category: string) => {
+  try {
+    const products = await api.get(`/category/${category}`);
 
     return products.data;
   } catch (error) {
@@ -28,4 +38,8 @@ const createProduct = async (data: FormData, token: string) => {
   }
 };
 
-export const productService = { getProducts, createProduct };
+export const productService = {
+  getAllProducts,
+  createProduct,
+  getProductsByCategory,
+};

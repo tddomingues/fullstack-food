@@ -25,9 +25,21 @@ const createItem = async (request: Request, response: Response) => {
   }
 };
 
-const getMenu = async (request: Request, response: Response) => {
+const getAllProducts = async (request: Request, response: Response) => {
   try {
     const menu = await Product.find({});
+
+    return response.status(200).json(menu);
+  } catch (error) {
+    return response.status(400).json({ error: "Erro ao criar  o cardápio." });
+  }
+};
+
+const getByCategory = async (request: Request, response: Response) => {
+  const { category } = request.params;
+
+  try {
+    const menu = await Product.find({ category });
 
     return response.status(200).json(menu);
   } catch (error) {
@@ -77,6 +89,12 @@ const updateItem = async (request: Request, response: Response) => {
   }
 };
 
-const menuControllers = { createItem, getMenu, deleteItem, updateItem };
+const menuControllers = {
+  createItem,
+  getAllProducts,
+  deleteItem,
+  updateItem,
+  getByCategory,
+};
 
 export default menuControllers;

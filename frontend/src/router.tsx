@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import App from "./App";
-import Menu from "./pages/Menu/Menu";
+
 import Drinks from "./pages/Home/Drinks/Drinks";
 import Home from "./pages/Home/Home";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
@@ -26,15 +26,15 @@ const AppRouter = createBrowserRouter([
             element: <AllProducts />,
           },
           {
-            path: "pizzas",
+            path: "category/pizza",
             element: <Pizzas />,
           },
           {
-            path: "drinks",
+            path: "category/drink",
             element: <Drinks />,
           },
           {
-            path: "burguers",
+            path: "category/burguer",
             element: <Burguers />,
           },
         ],

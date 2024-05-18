@@ -13,9 +13,10 @@ const initialState: IinitialState = {
   success: false,
   loading: false,
   product: {
+    _id: "",
     name: "",
     description: "",
-    price: "",
+    price: 0,
     imageUrl: "",
     category: "",
   },
@@ -23,10 +24,19 @@ const initialState: IinitialState = {
 };
 
 export const getProducts = createAsyncThunk("product/getProducts", async () => {
-  const res = await productService.getProducts();
+  const res = await productService.getAllProducts();
 
   return res;
 });
+
+export const getProductsByCategory = createAsyncThunk(
+  "product/getProductsByCategory",
+  async (category: string) => {
+    const res = await productService.getProductsByCategory(category);
+
+    return res;
+  },
+);
 
 export const createProduct = createAsyncThunk(
   "product/createProduct",
@@ -72,6 +82,22 @@ const productSlice = createSlice({
       .addCase(createProduct.rejected, (state) => {
         state.success = false;
         state.loading = false;
+      })
+      .addCase(getProductsByCategory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        getProductsByCategory.fulfilled,
+        (state, action: PayloadAction<ProductProps[]>) => {
+          state.success = true;
+          state.loading = false;
+          state.products = action.payload;
+        },
+      )
+      .addCase(getProductsByCategory.rejected, (state) => {
+        state.success = false;
+        state.loading = false;
+        state.products = [];
       });
   },
 });

@@ -12,18 +12,18 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
 
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { CartProps } from "../../interfaces/CartProps";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../../store";
 import { addItemToCart, addQuantity } from "../../slice/cartSlice";
+import { firstCapitalLetter } from "../../utils/firstCapitalLetter";
 
 interface ProductCardProps {
   products: ProductProps[];
@@ -66,10 +66,7 @@ const ProductCard = ({ products }: ProductCardProps) => {
     <div className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-4 ">
       {products &&
         products.slice(0, 5).map((product, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-2 max-w-[300px] relative justify-self-center"
-          >
+          <div key={i} className="flex flex-col gap-2 max-w-[300px] relative ">
             <div className="border border-neutral-400 rounded-md ">
               <img
                 src={BurgerImage}
@@ -142,7 +139,9 @@ const ProductCard = ({ products }: ProductCardProps) => {
               <span className="text-xs">7/10</span>
             </div>
             <div className="absolute top-2 left-2 flex items-center gap-1 bg-yellow-500 p-1 rounded-md">
-              <span className="text-xs font-semibold ">Hamburguer</span>
+              <span className="text-xs font-semibold ">
+                {firstCapitalLetter(product.category)}
+              </span>
             </div>
           </div>
         ))}

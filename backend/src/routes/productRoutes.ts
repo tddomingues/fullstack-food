@@ -15,7 +15,8 @@ router.post(
   validation,
   productControllers.createItem,
 );
-router.get("/getProducts", productControllers.getMenu);
+router.get("/getProducts", productControllers.getAllProducts);
+router.get("/category/:category", productControllers.getByCategory);
 router.delete("/deleteItem", productControllers.deleteItem);
 router.put("/updateItem", productControllers.updateItem);
 
