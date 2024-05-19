@@ -11,6 +11,9 @@ import Register from "./pages/Auth/Register/Register";
 import Pizzas from "./pages/Home/Pizzas/Pizzas";
 import Burguers from "./pages/Home/Burguers/Burguers";
 import AllProducts from "./pages/Home/AllProducts/AllProducts";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectLoggedRoute";
+import ProtectLoggedRoute from "./components/ProtectedRoute/ProtectLoggedRoute";
+import CheckOrderInformation from "./pages/CheckOrderInformation/CheckOrderInformation";
 
 const AppRouter = createBrowserRouter([
   {
@@ -44,16 +47,28 @@ const AppRouter = createBrowserRouter([
         element: <AdminPanel />,
       },
       {
+        path: "/check-order-information",
+        element: <CheckOrderInformation />,
+      },
+      {
         path: "/create-products",
         element: <CreateProducts />,
       },
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <ProtectLoggedRoute>
+            <Login />
+          </ProtectLoggedRoute>
+        ),
       },
       {
         path: "/register",
-        element: <Register />,
+        element: (
+          <ProtectLoggedRoute>
+            <Register />
+          </ProtectLoggedRoute>
+        ),
       },
     ],
   },

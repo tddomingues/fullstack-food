@@ -1,12 +1,24 @@
+import { useState } from "react";
+
+//styles
 import BurgerImage from "../../assets/burguer.png";
-import { ProductProps } from "../../interfaces/ProductProps";
-
 import { FaStar } from "react-icons/fa";
-import formatCurrency from "../../utils/formatCurrency";
-import { Button } from "../ui/button";
-
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 
+//utils
+import formatCurrency from "../../utils/formatCurrency";
+import { firstCapitalLetter } from "../../utils/firstCapitalLetter";
+
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { addItemToCart, addQuantity } from "../../slice/cartSlice";
+
+//interfaces
+import { ProductProps } from "../../interfaces/ProductProps";
+
+//componets
+import { Button } from "../ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,13 +30,6 @@ import {
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
 
-import { useState } from "react";
-import { CartProps } from "../../interfaces/CartProps";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../../store";
-import { addItemToCart, addQuantity } from "../../slice/cartSlice";
-import { firstCapitalLetter } from "../../utils/firstCapitalLetter";
-
 interface ProductCardProps {
   products: ProductProps[];
 }
@@ -32,17 +37,7 @@ interface ProductCardProps {
 const ProductCard = ({ products }: ProductCardProps) => {
   const [quantity, setQuantity] = useState(1);
 
-  // const [cart, setCart] = useState<CartProps[]>(() => {
-  //   const localStorageCart = localStorage.getItem("cart");
-
-  //   if (localStorageCart) return JSON.parse(localStorageCart);
-
-  //   return [];
-  // });
-
   const dispatch = useDispatch<AppDispatch>();
-
-  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
   const handleQuantity = (operation: string) => {
     if (operation === "sum") {
@@ -59,8 +54,6 @@ const ProductCard = ({ products }: ProductCardProps) => {
 
     setQuantity(1);
   };
-
-  console.log("carrinho:", cart);
 
   return (
     <div className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-4 ">

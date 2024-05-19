@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar/Navbar";
 import { Button } from "../../components/ui/button";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdminPanel = () => {

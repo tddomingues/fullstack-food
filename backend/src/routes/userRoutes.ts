@@ -13,6 +13,7 @@ router.post(
   userControllers.register,
 );
 router.post("/login", userControllers.login);
-router.get("/profile", validateToken, userControllers.profile);
+router.get("/logout", userControllers.logout);
+router.get("/getUser", validateToken, userControllers.getUser);
 
 export default router;

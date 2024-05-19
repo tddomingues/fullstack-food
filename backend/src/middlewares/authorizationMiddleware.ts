@@ -18,9 +18,7 @@ const validateToken = (
 
     const { userEmail } = jwt.verify(token, "secredokey") as JwtPayload;
 
-    response.cookie("userEmail", userEmail, {
-      expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
-    });
+    request.userEmail = userEmail;
 
     return next();
   } catch (error) {

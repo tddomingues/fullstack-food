@@ -59,18 +59,40 @@ const login = async (request: Request, response: Response) => {
         expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
       })
       .status(200)
-      .json({ message: "Autorizado com sucesso.", user, token });
+      .json({ message: "Autorizado com sucesso.", token });
   } catch (error) {
     return response.status(400).json({ error: "Erro ao criar o usuário." });
   }
 };
 
-const profile = async (request: Request, response: Response) => {
+const logout = async (request: Request, response: Response) => {
   try {
-    return response.status(200).json({ msg: "Rota protegida com token." });
+    return response
+      .clearCookie("token")
+      .clearCookie("userEmail")
+      .status(200)
+      .json({ message: "Logout com sucesso." });
+  } catch (error) {
+    return response.status(400).json({ error: "Erro ao fazer o logout." });
+  }
+};
+
+const getUser = async (request: Request, response: Response) => {
+  try {
+    const userEmail = request.userEmail;
+
+    console.log(userEmail);
+
+    const user = await User.findOne({ email: userEmail });
+
+    console.log("email do user", userEmail);
+    if (!user)
+      return response.status(400).json({ error: "Usuário não cadastrado." });
+
+    return response.status(200).json(user);
   } catch (error) {
     return response.status(400).json({ error: "Erro ao criar o usuário." });
   }
 };
 
-export const userControllers = { register, login, profile };
+export const userControllers = { register, login, getUser, logout };

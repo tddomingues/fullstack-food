@@ -1,34 +1,101 @@
+//router
 import { NavLink, useNavigate } from "react-router-dom";
+
+//components
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "../ui/menubar";
+import Cart from "../Cart/Cart";
 import { Button } from "../ui/button";
 
-import Cart from "../Cart/Cart";
+//styles
+import { BsPerson } from "react-icons/bs";
+import { LuLogOut } from "react-icons/lu";
+
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../../store";
+import { logout } from "../../slice/userSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
+
+  const token = useSelector<IRootState, string | undefined>(
+    (state) => state.user.token,
+  );
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <header className="flex justify-between items-center py-5 px-32 bg-neutral-50">
       <NavLink to="/">Logo</NavLink>
 
-      <ul className="flex items-center gap-4">
-        <li>
-          <Button variant="ghost" onClick={() => navigate("/login")}>
-            Entrar
-          </Button>
-        </li>
-        <li>
-          <Button variant="destructive">Cadastrar</Button>
-        </li>
-        {/* <li>
-          <NavLink to="/admin-painel">Admin</NavLink>
-        </li>
-        <li className="mr-5 transition ease-in-out delay-100 hover:text-destructive ">
-          <NavLink to="/perfil">Perfil</NavLink>
-        </li> */}
-        <li className="relative cursor-pointer">
-          <Cart />
-        </li>
-      </ul>
+      <div className="flex items-center gap-4">
+        <ul className="flex items-center gap-4">
+          {!token && (
+            <>
+              <li>
+                <Button variant="ghost" onClick={() => navigate("/login")}>
+                  Entrar
+                </Button>
+              </li>
+              <li>
+                <Button variant="destructive">Cadastrar</Button>
+              </li>
+            </>
+          )}
+
+          <li className="relative cursor-pointer ">
+            <Cart />
+          </li>
+        </ul>
+        {token && (
+          <Menubar>
+            <MenubarMenu>
+              <MenubarTrigger className="cursor-pointer ">
+                <BsPerson className="text-destructive text-3xl hover:text-destructive/90" />
+              </MenubarTrigger>
+              <MenubarContent>
+                {token && (
+                  <MenubarItem>
+                    <NavLink
+                      to="/perfil"
+                      className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
+                    >
+                      Meus Dados
+                    </NavLink>
+                  </MenubarItem>
+                )}
+                <MenubarItem>
+                  <NavLink
+                    to="/admin-painel"
+                    className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
+                  >
+                    Admin
+                  </NavLink>
+                </MenubarItem>
+                {/* <MenubarSeparator /> */}
+                <MenubarSeparator />
+                <MenubarItem onClick={handleLogout}>
+                  <div className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer flex gap-2 items-center">
+                    <span>Sair</span>
+                    <LuLogOut />
+                  </div>
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+        )}
+      </div>
     </header>
   );
 };

@@ -7,7 +7,13 @@ import cors from "cors";
 
 const app: Express = express();
 
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+    exposedHeaders: ["Set-Cookie", "Date", "ETag"],
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 
