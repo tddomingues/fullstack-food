@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser } from "../interface/IUser";
+import { UserProps } from "../interface/UserProps";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../model/user";
@@ -7,21 +7,21 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const register = async (request: Request, response: Response) => {
-  const { name, email, role, password, confirmPassword }: IUser = request.body;
+  const { name, email, role, password, confirmPassword }: UserProps =
+    request.body;
+
+  console.log(name);
 
   try {
     const userExist = await User.findOne({ email });
 
     if (userExist)
-      return response.status(400).json({ error: "Usuário existente." });
+      return response.status(400).json({ error: ["Usuário existente."] });
 
     if (password !== confirmPassword)
       return response
         .status(400)
-        .json({ error: "Senhas não correspondentes." });
-
-    if (!name || !email)
-      return response.status(400).json({ error: "Campo(s) vazios." });
+        .json({ error: ["Senhas não correspondentes."] });
 
     const newPassword = await bcrypt.hash(password, 10);
 
@@ -34,23 +34,23 @@ const register = async (request: Request, response: Response) => {
 
     return response.status(200).json(user);
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar o usuário." });
+    return response.status(400).json({ error: ["Erro ao criar o usuário."] });
   }
 };
 
 const login = async (request: Request, response: Response) => {
-  const { email, password }: IUser = request.body;
+  const { email, password }: UserProps = request.body;
 
   try {
     const user = await User.findOne({ email }).exec();
 
     if (!user)
-      return response.status(400).json({ error: "Usuário não registrado." });
+      return response.status(400).json({ error: ["Usuário não registrado."] });
 
     const comparePassword = await bcrypt.compare(password, user.password);
 
     if (!comparePassword)
-      return response.status(400).json({ error: "Senha inválida." });
+      return response.status(400).json({ error: ["Senha inválida."] });
 
     const token = jwt.sign({ userEmail: user.email }, "secredokey");
 
@@ -61,7 +61,7 @@ const login = async (request: Request, response: Response) => {
       .status(200)
       .json({ message: "Autorizado com sucesso.", token });
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar o usuário." });
+    return response.status(400).json({ error: ["Erro ao criar o usuário."] });
   }
 };
 
@@ -73,7 +73,7 @@ const logout = async (request: Request, response: Response) => {
       .status(200)
       .json({ message: "Logout com sucesso." });
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao fazer o logout." });
+    return response.status(400).json({ error: ["Erro ao fazer o logout."] });
   }
 };
 
@@ -87,11 +87,11 @@ const getUser = async (request: Request, response: Response) => {
 
     console.log("email do user", userEmail);
     if (!user)
-      return response.status(400).json({ error: "Usuário não cadastrado." });
+      return response.status(400).json({ error: ["Usuário não cadastrado."] });
 
     return response.status(200).json(user);
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar o usuário." });
+    return response.status(400).json({ error: ["Erro ao criar o usuário."] });
   }
 };
 

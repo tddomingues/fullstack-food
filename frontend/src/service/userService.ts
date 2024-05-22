@@ -1,19 +1,34 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { UserProps } from "../interfaces/UserProps";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/user",
 });
 
-const login = async (user: { email: string; password: string }) => {
-  try {
-    const res = await api.post("/login", user, {
-      withCredentials: true,
-    });
+type UserDataForLogin = Omit<UserProps, "name" | "confirmPassword" | "role">;
 
-    return res.data;
-  } catch (error) {
-    return console.log(error);
-  }
+interface UserDataForRegisterProps extends UserProps {
+  confirmPassword: string;
+}
+
+const login = async (user: UserDataForLogin) => {
+  const res = await api
+    .post("/login", user, {
+      withCredentials: true,
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
+
+  return res;
+};
+
+const register = async (user: UserDataForRegisterProps) => {
+  const res = await api
+    .post("/register", user)
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
+
+  return res;
 };
 
 const logout = async () => {
@@ -42,4 +57,4 @@ const getUser = async (token: string) => {
   }
 };
 
-export const userService = { login, logout, getUser };
+export const userService = { login, logout, getUser, register };

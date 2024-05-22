@@ -12,7 +12,12 @@ router.post(
   validation,
   userControllers.register,
 );
-router.post("/login", userControllers.login);
+router.post(
+  "/login",
+  userMiddlewares.validateUseLogin(),
+  validation,
+  userControllers.login,
+);
 router.get("/logout", userControllers.logout);
 router.get("/getUser", validateToken, userControllers.getUser);
 

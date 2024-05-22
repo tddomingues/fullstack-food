@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import Product from "../model/product";
-import { IMenu } from "../interface/IMenu";
+import { MenuProps } from "../interface/MenuProps";
+import User from "../model/user";
 
 const createItem = async (request: Request, response: Response) => {
-  const { name, price, category, description } = request.body as IMenu;
+  const { name, price, category, description }: MenuProps = request.body;
 
   const imageUrl = request.file?.filename;
   console.log(imageUrl);
@@ -48,44 +49,55 @@ const getByCategory = async (request: Request, response: Response) => {
 };
 
 const deleteItem = async (request: Request, response: Response) => {
-  const { id } = request.query;
+  const { _id } = request.params;
 
   try {
-    const item = await Product.findById({ _id: id });
+    const userEmail = request.userEmail;
+
+    const user = await User.findOne({ email: userEmail });
+
+    if (user?.role === "client")
+      return response
+        .status(400)
+        .json({ error: ["Sem permissão para excluir."] });
+
+    const item = await Product.findById({ _id });
 
     if (!item)
-      return response.status(400).json({ error: "Item não encontrado." });
+      return response.status(400).json({ error: ["Produto não encontrado."] });
 
-    await Product.deleteOne({ _id: id });
+    await Product.deleteOne({ _id: _id });
 
-    return response.status(200).json({ message: "Item deletado com sucesso." });
+    return response
+      .status(200)
+      .json({ message: "Produto deletado com sucesso." });
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar o cardápio." });
+    return response.status(400).json({ error: ["Erro ao excluir o produto."] });
   }
 };
 
-const updateItem = async (request: Request, response: Response) => {
+const editProduct = async (request: Request, response: Response) => {
   const { id } = request.query;
-  const { name, category, price, imageUrl } = request.body as IMenu;
+  const { name, category, price, imageUrl }: MenuProps = request.body;
 
   try {
-    const item = await Product.findById({ _id: id }).exec();
+    const produto = await Product.findById({ _id: id }).exec();
 
-    if (!item)
-      return response.status(400).json({ error: "Item não encontrado." });
+    if (!produto)
+      return response.status(400).json({ error: ["Produto não encontrado."] });
 
-    if (name) item.name = name;
-    if (category) item.category = category;
-    if (price) item.price = price;
-    if (imageUrl) item.imageUrl = imageUrl;
+    if (name) produto.name = name;
+    if (category) produto.category = category;
+    if (price) produto.price = price;
+    if (imageUrl) produto.imageUrl = imageUrl;
 
-    await item.save();
+    await produto.save();
 
     return response
       .status(200)
       .json({ message: "Item atualizado com sucesso." });
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar o cardápio." });
+    return response.status(400).json({ error: ["Erro ao criar o produto."] });
   }
 };
 
@@ -93,7 +105,7 @@ const menuControllers = {
   createItem,
   getAllProducts,
   deleteItem,
-  updateItem,
+  editProduct,
   getByCategory,
 };
 

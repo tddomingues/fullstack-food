@@ -25,21 +25,48 @@ const getProductsByCategory = async (category: string) => {
 };
 
 const createProduct = async (data: FormData, token: string) => {
-  try {
-    const product = await api.post("/createItem", data, {
+  const res = await api
+    .post("/createItem", data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
 
-    return product.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return res;
+};
+
+const editProduct = async (data: FormData, token: string) => {
+  const res = await api
+    .put("/editProduct", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
+
+  return res;
+};
+
+const deleteProduct = async (_id: string, token: string) => {
+  const res = await api
+    .delete(`/deleteItem/${_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
+
+  return res.data;
 };
 
 export const productService = {
   getAllProducts,
   createProduct,
   getProductsByCategory,
+  deleteProduct,
+  editProduct,
 };

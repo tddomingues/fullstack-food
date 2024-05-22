@@ -6,7 +6,7 @@ import { CartProps } from "../../interfaces/CartProps";
 
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import ProductCart from "../../components/ProductCart/ProductCart";
+import ProductCart from "../../components/ProductCart";
 import { useEffect } from "react";
 import { getUser } from "../../slice/userSlice";
 import { UserProps } from "../../interfaces/UserProps";

@@ -17,7 +17,7 @@ router.post(
 );
 router.get("/getProducts", productControllers.getAllProducts);
 router.get("/category/:category", productControllers.getByCategory);
-router.delete("/deleteItem", productControllers.deleteItem);
-router.put("/updateItem", productControllers.updateItem);
+router.delete("/deleteItem/:_id", validateToken, productControllers.deleteItem);
+router.put("/editProdut", validateToken, productControllers.editProduct);
 
 export default router;

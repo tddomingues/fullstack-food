@@ -6,8 +6,9 @@ import Cookies from "js-cookie";
 interface IInitialState {
   user: UserProps | null;
   token: string | undefined;
-  error: string | null;
+  error: string[] | null;
   loading: boolean;
+  success: boolean;
 }
 
 const token = Cookies.get("token");
@@ -17,15 +18,30 @@ const initialState: IInitialState = {
   token: token === undefined ? undefined : token,
   error: null,
   loading: false,
+  success: false,
 };
+
+interface UserDataForRegisterProps extends UserProps {
+  confirmPassword: string;
+}
 
 export const login = createAsyncThunk(
   "login",
-  async (user: { email: string; password: string }) => {
-    const data: { message: string; token: string } =
-      await userService.login(user);
+  async (user: { email: string; password: string }, thunkAPI) => {
+    const data = await userService.login(user);
 
-    //Cookies.set("token", document.cookie.split("token=")[1]);
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
+
+    return data;
+  },
+);
+
+export const register = createAsyncThunk(
+  "register",
+  async (user: UserDataForRegisterProps, thunkAPI) => {
+    const data = await userService.register(user);
+
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
 
     return data;
   },
@@ -36,17 +52,12 @@ export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
 
   Cookies.remove("token");
 
-  // if (data.error) {
-  //   return { error: thunkAPI.rejectWithValue };
-  // }
-
   return data;
 });
 
 export const getUser = createAsyncThunk("getUser", async (token: string) => {
-  console.log(token);
   const data = await userService.getUser(token);
-  console.log("ss");
+
   return data;
 });
 
@@ -56,9 +67,34 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state) => {
         state.token = Cookies.get("token");
-        state.user = null;
+        state.loading = true;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.token = undefined;
+        state.loading = false;
+        state.error = action.payload as string[];
+      })
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(register.fulfilled, (state) => {
+        state.token = Cookies.get("token");
+        state.loading = true;
+        state.success = true;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.token = undefined;
+        state.loading = false;
+        state.error = action.payload as string[];
+        state.success = false;
       })
       .addCase(logout.rejected, (state, action) => {
         state.token = undefined;
@@ -67,6 +103,9 @@ const userSlice = createSlice({
       .addCase(logout.fulfilled, (state, action) => {
         state.token = undefined;
         state.user = null;
+      })
+      .addCase(getUser.pending, (state) => {
+        state.loading = true;
       })
       .addCase(getUser.fulfilled, (state, action: PayloadAction<UserProps>) => {
         state.loading = false;

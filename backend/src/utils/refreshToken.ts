@@ -1,8 +1,8 @@
-import { IRefreshToken } from "../interface/IRefreshToken";
-import { IUser } from "../interface/IUser";
+import { RefreshTokenProps } from "../interface/RefreshTokenProps";
+import { UserProps } from "../interface/UserProps";
 import RefreshToken from "../model/refreshToken";
 
-export const createRefreshToken = async (user: IUser) => {
+export const createRefreshToken = async (user: UserProps) => {
   let expiredAt = new Date();
 
   expiredAt.setSeconds(expiredAt.getSeconds() + Number(86400));
@@ -20,6 +20,6 @@ export const createRefreshToken = async (user: IUser) => {
   return refreshToken;
 };
 
-export const verifyExpiration = (refreshToken: IRefreshToken) => {
+export const verifyExpiration = (refreshToken: RefreshTokenProps) => {
   return refreshToken.expiryDate.getTime() < new Date().getTime();
 };

@@ -16,7 +16,7 @@ const validation = (
     return error.msg;
   });
 
-  response.status(400).json(filteredErrors);
+  response.status(400).json({ error: filteredErrors });
 };
 
 export default validation;

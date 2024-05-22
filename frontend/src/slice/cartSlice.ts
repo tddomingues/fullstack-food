@@ -18,22 +18,43 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addQuantity: (
-      state,
-      actions: PayloadAction<{ product: ProductProps; quantity: number }>,
-    ) => {
+    addQuantityOfProductsInCart: (state, actions: PayloadAction<CartProps>) => {
       const newProduct = state.cart.map((productCart) => {
-        if (productCart._id === actions.payload.product._id) {
+        const quantity = actions.payload.quantity + 1;
+        if (productCart._id === actions.payload._id) {
           return {
             ...productCart,
-            quantity: actions.payload.quantity,
-            subTotalPrice: productCart.price * actions.payload.quantity,
+            quantity,
+            subTotalPrice: productCart.price * quantity,
           };
         }
         return productCart;
       });
 
-      console.log("quantide> ", actions.payload.quantity);
+      localStorage.setItem("cart", JSON.stringify(newProduct));
+
+      state.cart = newProduct;
+
+      return;
+    },
+    reducerQuantityOfProductsInCart: (
+      state,
+      actions: PayloadAction<CartProps>,
+    ) => {
+      const newProduct = state.cart.map((productCart) => {
+        if (
+          productCart._id === actions.payload._id &&
+          actions.payload.quantity > 1
+        ) {
+          const quantity = actions.payload.quantity - 1;
+          return {
+            ...productCart,
+            quantity,
+            subTotalPrice: productCart.price * quantity,
+          };
+        }
+        return productCart;
+      });
 
       localStorage.setItem("cart", JSON.stringify(newProduct));
 
@@ -49,12 +70,13 @@ const cartSlice = createSlice({
       if (productExists) {
         const newCart = state.cart.map((productCart) => {
           if (productCart._id === action.payload._id) {
-            const subTotalPrice = productCart.price * productCart.quantity;
+            const quantity = productCart.quantity + 1;
+            const subTotalPrice = productCart.price * quantity;
 
             return {
               ...productCart,
               subTotalPrice,
-              quantity: productCart.quantity,
+              quantity,
             };
           }
 
@@ -95,7 +117,11 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItemToCart, addQuantity, removeItemToCart } =
-  cartSlice.actions;
+export const {
+  addItemToCart,
+  addQuantityOfProductsInCart,
+  reducerQuantityOfProductsInCart,
+  removeItemToCart,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
