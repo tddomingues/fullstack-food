@@ -7,7 +7,6 @@ const createItem = async (request: Request, response: Response) => {
   const { name, price, category, description }: MenuProps = request.body;
 
   const imageUrl = request.file?.filename;
-  console.log(imageUrl);
 
   try {
     const item = await Product.create({
@@ -31,6 +30,21 @@ const getAllProducts = async (request: Request, response: Response) => {
     const menu = await Product.find({});
 
     return response.status(200).json(menu);
+  } catch (error) {
+    return response.status(400).json({ error: "Erro ao criar  o cardápio." });
+  }
+};
+
+const getProduct = async (request: Request, response: Response) => {
+  const { id } = request.params;
+
+  try {
+    const produto = await Product.findById({ _id: id });
+
+    if (!produto)
+      return response.status(400).json({ error: ["Produto não encontrado."] });
+
+    return response.status(200).json(produto);
   } catch (error) {
     return response.status(400).json({ error: "Erro ao criar  o cardápio." });
   }
@@ -77,27 +91,30 @@ const deleteItem = async (request: Request, response: Response) => {
 };
 
 const editProduct = async (request: Request, response: Response) => {
-  const { id } = request.query;
-  const { name, category, price, imageUrl }: MenuProps = request.body;
+  const { id } = request.params;
+  const { name, category, price, description }: MenuProps = request.body;
 
   try {
     const produto = await Product.findById({ _id: id }).exec();
-
+    console.log(request.file?.filename);
     if (!produto)
       return response.status(400).json({ error: ["Produto não encontrado."] });
 
     if (name) produto.name = name;
     if (category) produto.category = category;
+    if (description) produto.description = description;
     if (price) produto.price = price;
-    if (imageUrl) produto.imageUrl = imageUrl;
+    if (request.file?.filename) produto.imageUrl = request.file?.filename;
 
     await produto.save();
 
     return response
       .status(200)
-      .json({ message: "Item atualizado com sucesso." });
+      .json({ message: ["Item atualizado com sucesso."] });
   } catch (error) {
-    return response.status(400).json({ error: ["Erro ao criar o produto."] });
+    return response
+      .status(400)
+      .json({ error: ["Erro ao atualizar o produto."] });
   }
 };
 
@@ -107,6 +124,7 @@ const menuControllers = {
   deleteItem,
   editProduct,
   getByCategory,
+  getProduct,
 };
 
 export default menuControllers;

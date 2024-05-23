@@ -55,7 +55,7 @@ const ProductCard = ({ products }: ProductsCardProps) => {
           >
             <div className="border border-neutral-400 rounded-md ">
               <img
-                src={BurgerImage}
+                src={`http://localhost:3000/uploads/${product.imageUrl}`}
                 alt=""
                 className="transition ease-in-out delay-100 hover:scale-105"
               />
@@ -70,7 +70,9 @@ const ProductCard = ({ products }: ProductsCardProps) => {
               <div className="flex justify-between gap-4">
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-600/90"
-                  onClick={() => navigate("admin-painel/edit-product")}
+                  onClick={() =>
+                    navigate(`admin-painel/edit-product/${product._id}`)
+                  }
                 >
                   Editar
                 </Button>

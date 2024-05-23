@@ -21,13 +21,14 @@ import { LuLogOut } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../store";
 import { logout } from "../slice/userSlice";
+import { useUserInfo } from "../hooks/useUserInfo";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
+  const { token, user } = useUserInfo();
+
+  console.log("user user user ", user);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -53,10 +54,11 @@ const Navbar = () => {
               </li>
             </>
           )}
-
-          <li className="relative cursor-pointer ">
-            <Cart />
-          </li>
+          {user && user.role === "client" && (
+            <li className="relative cursor-pointer ">
+              <Cart />
+            </li>
+          )}
         </ul>
         {token && (
           <Menubar>

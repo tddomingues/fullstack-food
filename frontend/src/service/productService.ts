@@ -24,6 +24,19 @@ const getProductsByCategory = async (category: string) => {
   }
 };
 
+const getProduct = async (id: string, token: string) => {
+  const res = await api
+    .get(`/getProduct/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
+
+  return res;
+};
+
 const createProduct = async (data: FormData, token: string) => {
   const res = await api
     .post("/createItem", data, {
@@ -37,15 +50,17 @@ const createProduct = async (data: FormData, token: string) => {
   return res;
 };
 
-const editProduct = async (data: FormData, token: string) => {
+const editProduct = async (data: FormData, token: string, id: string) => {
   const res = await api
-    .put("/editProduct", data, {
+    .put(`/editProduct/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
     .then((res) => res.data)
     .catch((err) => err.response.data);
+
+  console.log(data);
 
   return res;
 };
@@ -69,4 +84,5 @@ export const productService = {
   getProductsByCategory,
   deleteProduct,
   editProduct,
+  getProduct,
 };

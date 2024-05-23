@@ -17,7 +17,13 @@ router.post(
 );
 router.get("/getProducts", productControllers.getAllProducts);
 router.get("/category/:category", productControllers.getByCategory);
+router.get("/getProduct/:id", productControllers.getProduct);
 router.delete("/deleteItem/:_id", validateToken, productControllers.deleteItem);
-router.put("/editProdut", validateToken, productControllers.editProduct);
+router.put(
+  "/editProduct/:id",
+  validateToken,
+  uploadFile,
+  productControllers.editProduct,
+);
 
 export default router;

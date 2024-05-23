@@ -16,7 +16,9 @@ const login = async (user: UserDataForLogin) => {
     .post("/login", user, {
       withCredentials: true,
     })
-    .then((res) => res.data)
+    .then((res) => {
+      return res.data;
+    })
     .catch((err) => err.response.data);
 
   return res;

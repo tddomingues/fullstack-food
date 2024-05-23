@@ -2,28 +2,20 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { productService } from "../service/productService";
 import { ProductProps } from "../interfaces/ProductProps";
 import Cookies from "js-cookie";
-import { useToastWarning } from "../hooks/useToast";
 
 interface IinitialState {
-  success: boolean;
+  success: string | null;
   loading: boolean;
   error: string[] | null;
-  product: ProductProps;
+  product: ProductProps | undefined;
   products: ProductProps[];
 }
 
 const initialState: IinitialState = {
-  success: false,
+  success: null,
   loading: false,
   error: null,
-  product: {
-    _id: "",
-    name: "",
-    description: "",
-    price: 0,
-    imageUrl: "",
-    category: "",
-  },
+  product: undefined,
   products: [],
 };
 
@@ -37,6 +29,15 @@ export const getProductsByCategory = createAsyncThunk(
   "product/getProductsByCategory",
   async (category: string) => {
     const res = await productService.getProductsByCategory(category);
+
+    return res;
+  },
+);
+
+export const getProduct = createAsyncThunk(
+  "product/getProduct",
+  async ({ id, token }: { id: string; token: string }) => {
+    const res = await productService.getProduct(id, token);
 
     return res;
   },
@@ -58,8 +59,18 @@ export const createProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   "product/editProduct",
-  async ({ formData, token }: { formData: FormData; token: string }) => {
-    const res = await productService.editProduct(formData, token);
+  async ({
+    formData,
+    token,
+    id,
+  }: {
+    formData: FormData;
+    token: string;
+    id: string;
+  }) => {
+    const res = await productService.editProduct(formData, token, id);
+
+    console.log("formData ", formData, token, id);
 
     return res;
   },
@@ -85,7 +96,7 @@ const productSlice = createSlice({
     reset: (state) => {
       state.error = null;
       state.loading = false;
-      state.success = false;
+      state.success = null;
     },
   },
   extraReducers: (builder) => {
@@ -104,15 +115,30 @@ const productSlice = createSlice({
         state.loading = false;
         state.products = [];
       })
+      .addCase(getProduct.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        getProduct.fulfilled,
+        (state, action: PayloadAction<ProductProps>) => {
+          state.loading = false;
+          state.product = action.payload;
+        },
+      )
+      .addCase(getProduct.rejected, (state) => {
+        state.loading = false;
+        state.product = undefined;
+      })
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
       })
       .addCase(createProduct.fulfilled, (state) => {
-        state.success = true;
+        state.success = "Criado com sucesso.";
         state.loading = false;
+        state.error = null;
       })
       .addCase(createProduct.rejected, (state, action) => {
-        state.success = false;
+        state.success = null;
         state.loading = false;
         state.error = action.payload as string[];
       })
@@ -120,11 +146,12 @@ const productSlice = createSlice({
         state.loading = true;
       })
       .addCase(editProduct.fulfilled, (state) => {
-        state.success = true;
+        state.success = "Editado com sucesso,";
         state.loading = false;
+        state.error = null;
       })
       .addCase(editProduct.rejected, (state) => {
-        state.success = false;
+        state.success = null;
         state.loading = false;
       })
       .addCase(getProductsByCategory.pending, (state) => {
@@ -142,16 +169,15 @@ const productSlice = createSlice({
         state.products = [];
       })
       .addCase(deleteProduct.pending, (state) => {
-        state.success = false;
         state.loading = true;
         state.error = null;
       })
       .addCase(deleteProduct.fulfilled, (state) => {
-        state.success = true;
+        state.success = "Deletado com sucesso.";
         state.loading = false;
       })
       .addCase(deleteProduct.rejected, (state, action) => {
-        state.success = false;
+        state.success = null;
         state.loading = false;
         state.error = action.payload as string[];
       });

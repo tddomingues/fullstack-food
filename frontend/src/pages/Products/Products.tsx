@@ -2,24 +2,30 @@ import Navbar from "../../components/Navbar";
 
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
+import { useUserInfo } from "../../hooks/useUserInfo";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const { user } = useUserInfo();
+
   return (
     <>
       <Navbar />
 
       <main className="py-6 px-32 ">
         <section>
-          <div className="flex justify-between items-center">
-            <h1 className="font-semibold text-xl">Faça um pedido</h1>
-            <Button
-              onClick={() => navigate("admin-painel/create-product")}
-              variant="outline"
-            >
-              Criar Produto
-            </Button>
-          </div>
+          {user && user.role === "admin" && (
+            <div className="flex justify-between items-center">
+              <h1 className="font-semibold text-xl">Faça um pedido</h1>
+              <Button
+                onClick={() => navigate("admin-painel/create-product")}
+                variant="outline"
+              >
+                Criar Produto
+              </Button>
+            </div>
+          )}
 
           <div className="flex justify-between gap-4 mt-4">
             <div>

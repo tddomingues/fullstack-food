@@ -53,7 +53,7 @@ const AppRouter = createBrowserRouter([
             element: <CreateProducts />,
           },
           {
-            path: "edit-product",
+            path: "edit-product/:id",
             element: <EditProduct />,
           },
         ],
