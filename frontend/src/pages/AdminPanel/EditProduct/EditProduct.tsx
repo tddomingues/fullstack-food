@@ -165,6 +165,9 @@ const EditProduct = () => {
                     className=" p-2 rounded-md text-sm text-neutral-800"
                     ref={categoryRef}
                   >
+                    <option value="" selected>
+                      --Nenhum--
+                    </option>
                     <option value="burguer">Hamburguer</option>
                     <option value="pizza">Pizza</option>
                     <option value="drink">Bebida</option>

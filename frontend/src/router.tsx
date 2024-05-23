@@ -16,6 +16,8 @@ import Auth from "./pages/Auth/Auth";
 import CreateProducts from "./pages/AdminPanel/CreateProducts/CreateProducts";
 import EditProduct from "./pages/AdminPanel/EditProduct/EditProduct";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
+import Profile from "./pages/Profile/Profile";
+import Address from "./pages/Profile/Address/Address";
 
 const AppRouter = createBrowserRouter([
   {
@@ -62,6 +64,20 @@ const AppRouter = createBrowserRouter([
         path: "/check-order-information",
         element: <CheckOrderInformation />,
       },
+      // {
+      //   path: "/profile",
+      //   element: <Profile />,
+      //   children: [
+      //     {
+      //       path: "info",
+      //       element: <Address />,
+      //     },
+      //     // {
+      //     //   path: "order",
+      //     //   element: <Register />,
+      //     // },
+      //   ],
+      // },
 
       {
         path: "/",

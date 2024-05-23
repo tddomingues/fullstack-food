@@ -16,7 +16,6 @@ import { Button } from "./ui/button";
 import { useUserInfo } from "../hooks/useUserInfo";
 
 //styles
-import { BsPerson } from "react-icons/bs";
 import { LuLogOut } from "react-icons/lu";
 
 //image
@@ -77,7 +76,17 @@ const Navbar = () => {
                 {user?.role === "client" && (
                   <MenubarItem>
                     <NavLink
-                      to="/perfil"
+                      to="/profile/info"
+                      className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
+                    >
+                      Perfil
+                    </NavLink>
+                  </MenubarItem>
+                )}
+                {user?.role === "client" && (
+                  <MenubarItem>
+                    <NavLink
+                      to="/profile/order"
                       className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
                     >
                       Pedidos

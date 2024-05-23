@@ -70,69 +70,71 @@ const ProductCard = ({ products }: ProductsCardProps) => {
         products.map((product) => (
           <div
             key={product._id}
-            className="flex flex-col gap-2 max-w-[300px] relative "
+            className="flex flex-col justify-between gap-2 max-w-[300px] relative "
           >
-            <div className="border border-neutral-400 rounded-md ">
+            <div className="border border-neutral-400 rounded-md  p-4 ">
               <img
                 src={`http://localhost:3000/uploads/${product.imageUrl}`}
                 alt={product.description}
-                className="transition ease-in-out delay-100 hover:scale-105"
+                className="transition ease-in-out delay-100 hover:scale-105 object-contain h-[200px]  m-auto"
               />
             </div>
-            <h3 className="font-semibold">{product.name}</h3>
-            <div className="self-start">
-              <strong className="font-semibold">
-                {formatCurrency(Number(product.price))}
-              </strong>
-            </div>
-            {user && user.role === "admin" && (
-              <div className="flex justify-between gap-4">
-                <Button
-                  className="flex-1 bg-blue-600 hover:bg-blue-600/90"
-                  onClick={() =>
-                    navigate(`admin-painel/edit-product/${product._id}`)
-                  }
-                >
-                  Editar
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button className="flex-1" variant="destructive">
-                      Excluir
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Deseja excluir o produto?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        O Produto será excluido permanentemente.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDeleteProduct(product._id)}
-                        className="bg-destructive hover:bg-destructive/90"
-                      >
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+            <div>
+              <h3 className="font-semibold">{product.name}</h3>
+              <div className="self-start my-2">
+                <strong className="font-semibold">
+                  {formatCurrency(Number(product.price))}
+                </strong>
               </div>
-            )}
+              {user && user.role === "admin" && (
+                <div className="flex justify-between gap-4">
+                  <Button
+                    className="flex-1 bg-blue-600 hover:bg-blue-600/90"
+                    onClick={() =>
+                      navigate(`/admin-painel/edit-product/${product._id}`)
+                    }
+                  >
+                    Editar
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="flex-1" variant="destructive">
+                        Excluir
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Deseja excluir o produto?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          O Produto será excluido permanentemente.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteProduct(product._id)}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
 
-            {user?.role !== "admin" && (
-              <Button
-                className="w-full"
-                variant="destructive"
-                onClick={() => handleAddItemToCart(product)}
-              >
-                Adicionar
-              </Button>
-            )}
+              {user?.role !== "admin" && (
+                <Button
+                  className="w-full"
+                  variant="destructive"
+                  onClick={() => handleAddItemToCart(product)}
+                >
+                  Adicionar
+                </Button>
+              )}
+            </div>
 
             <div className="absolute top-2 right-2 flex items-center gap-1 p-1">
               <FaStar className="text-yellow-500" />

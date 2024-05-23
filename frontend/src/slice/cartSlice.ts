@@ -27,7 +27,7 @@ const cartSlice = createSlice({
           return {
             ...productCart,
             quantity,
-            subTotalPrice: productCart.price * quantity,
+            subTotalPrice: +productCart.price * quantity,
           };
         }
         return productCart;
@@ -52,7 +52,7 @@ const cartSlice = createSlice({
           return {
             ...productCart,
             quantity,
-            subTotalPrice: productCart.price * quantity,
+            subTotalPrice: +productCart.price * quantity,
           };
         }
         return productCart;
@@ -73,7 +73,7 @@ const cartSlice = createSlice({
         const newCart = state.cart.map((productCart) => {
           if (productCart._id === action.payload._id) {
             const quantity = productCart.quantity + 1;
-            const subTotalPrice = productCart.price * quantity;
+            const subTotalPrice = +productCart.price * quantity;
 
             return {
               ...productCart,
@@ -95,7 +95,7 @@ const cartSlice = createSlice({
       const newProductAdded: CartProps = {
         ...action.payload,
         quantity: 1,
-        subTotalPrice: action.payload.price,
+        subTotalPrice: +action.payload.price,
       };
 
       localStorage.setItem(

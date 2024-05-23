@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 //utils
 import formatCurrency from "../../utils/formatCurrency";
@@ -22,6 +22,11 @@ import ProductCart from "../../components/ProductCart";
 import { Button } from "../../components/ui/button";
 
 const CheckOrderInformation = () => {
+  const addressRef = useRef(null);
+  const cityRef = useRef(null);
+  const stateRef = useRef(null);
+  const postalCodeRef = useRef(null);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
@@ -33,6 +38,8 @@ const CheckOrderInformation = () => {
   const totalPrice = cart.reduce((previous, current) => {
     return previous + current.subTotalPrice;
   }, 0);
+
+  const handleLogin = () => {};
 
   useEffect(() => {
     dispatch(getUser(token || ""));
@@ -70,65 +77,66 @@ const CheckOrderInformation = () => {
                     disabled
                   />
                 </label>
-
-                <div className="flex justify-end mt-4">
-                  <Button variant="outline">Editar</Button>
-                </div>
               </form>
             </section>
-            <section>
-              <h2 className="font-semibold text-lg mb-1">Verificar Endereço</h2>
-              <form className="p-2 rounded-md border border-neutral-400 ">
-                <div className="flex items-center gap-4 mb-4">
-                  <label>
-                    <span className="block mb-1 text-sm font-medium">
-                      Bairro
-                    </span>
-                    <input
-                      type="text"
-                      name=""
-                      id=""
-                      className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                      disabled
-                    />
-                  </label>
-                  <label>
-                    <span className="block mb-1 text-sm font-medium">Rua</span>
-                    <input
-                      type="text"
-                      name=""
-                      id=""
-                      className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                      disabled
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center gap-4">
-                  <label>
-                    <span className="block mb-1 text-sm font-medium">
-                      Número
-                    </span>
-                    <input
-                      type="text"
-                      name=""
-                      id=""
-                      className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                      disabled
-                    />
-                  </label>
-                  <label>
-                    <span className="block mb-1 text-sm font-medium">CEP</span>
-                    <input
-                      type="text"
-                      name=""
-                      id=""
-                      className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                      disabled
-                    />
-                  </label>
-                </div>
+            <section className="w-[400px]">
+              <h2 className="font-semibold text-lg mb-1">Endereço</h2>
+              <form
+                className="flex flex-col gap-4 p-2 rounded-md border border-neutral-400 "
+                onSubmit={handleLogin}
+              >
+                <label>
+                  <span className="block mb-1 text-sm font-medium">
+                    Endereço
+                  </span>
+                  <input
+                    type="text"
+                    name=""
+                    id=""
+                    className="p-2 rounded-md text-sm text-neutral-800 w-full"
+                    placeholder="Informe seu e-mail"
+                    ref={addressRef}
+                  />
+                </label>
+                <label>
+                  <span className="block mb-1 text-sm font-medium">Cidade</span>
+                  <select ref={cityRef}>
+                    <option value="">--Nenhum--</option>
+                    <option value="maringá">Maringá</option>
+                  </select>
+                </label>
+                <label>
+                  <span className="block mb-1 text-sm font-medium">Estado</span>
+                  <select ref={stateRef}>
+                    <option value="">--Nenhum--</option>
+                    <option value="paraná">Paraná</option>
+                  </select>
+                </label>
+                <label>
+                  <span className="block mb-1 text-sm font-medium">CEP</span>
+                  <input
+                    type="text"
+                    name=""
+                    id=""
+                    className="p-2 rounded-md text-sm text-neutral-800 w-full"
+                    placeholder="Informe sua senha"
+                    ref={postalCodeRef}
+                  />
+                </label>
+
+                {/* {error && (
+          <div className="pt-2 px-2 bg-destructive rounded-md">
+            {error &&
+              error.map((err) => (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  {err}
+                </p>
+              ))}
+          </div>
+        )} */}
+
                 <div className="flex justify-end mt-4">
-                  <Button variant="outline">Editar</Button>
+                  <Button variant="destructive">Inserir</Button>
                 </div>
               </form>
             </section>

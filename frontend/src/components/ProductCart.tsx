@@ -48,10 +48,11 @@ const ProductCart = () => {
               key={productCart._id}
             >
               <div className="flex gap-2 items-center">
-                <div className="w-[80px] border border-neutral-400 rounded-md ">
+                <div className="w-[80px] h-[80px] border border-neutral-400 rounded-md ">
                   <img
                     src={`http://localhost:3000/uploads/${productCart.imageUrl}`}
                     alt={productCart.description}
+                    className="object-contain w-full h-full p-1"
                   />
                 </div>
                 <div className="">

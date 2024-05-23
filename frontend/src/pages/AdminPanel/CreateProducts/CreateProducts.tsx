@@ -65,6 +65,13 @@ const CreateProducts = () => {
     };
 
     dispatch(createProduct(data));
+
+    setViewImage("");
+    nameRef.current!.value = "";
+    descriptionRef.current!.value = "";
+    priceRef.current!.value = "";
+    categoryRef.current!.value = "";
+    imageRef.current!.value = "";
   };
 
   const handleViewImage = (e: ChangeEvent) => {
@@ -101,12 +108,16 @@ const CreateProducts = () => {
                   ref={imageRef}
                   onChange={handleViewImage}
                 />
-                <div className="w-[400px] h-[400px] border border-dashed border-neutral-300 bg-neutral-50 cursor-pointer flex justify-center items-center relative">
+                <div className=" w-[400px] h-[400px] border border-dashed border-neutral-300 bg-neutral-50 cursor-pointer flex justify-center items-center relative">
                   <MdOutlineAddPhotoAlternate
                     size={40}
                     className="text-neutral-300"
                   />
-                  <img src={viewImage || ""} alt="" className="absolute z-10" />
+                  <img
+                    src={viewImage || ""}
+                    alt=""
+                    className="absolute z-10 h-full object-contain p-2"
+                  />
                 </div>
               </label>
             </div>
@@ -129,7 +140,7 @@ const CreateProducts = () => {
                     name=""
                     id=""
                     min={0}
-                    className=" p-2 rounded-md text-sm text-neutral-800"
+                    className=" p-2 rounded-md text-sm text-neutral-800 w-16"
                     ref={priceRef}
                   />
                 </label>
@@ -141,6 +152,9 @@ const CreateProducts = () => {
                     className=" p-2 rounded-md text-sm text-neutral-800"
                     ref={categoryRef}
                   >
+                    <option value="" selected>
+                      --Nenhum--
+                    </option>
                     <option value="burguer">Hamburguer</option>
                     <option value="pizza">Pizza</option>
                     <option value="drink">Bebida</option>
@@ -168,8 +182,11 @@ const CreateProducts = () => {
           )}
           {error && (
             <div className="pt-2 px-2 bg-destructive rounded-md">
-              {error.map((err) => (
-                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+              {error.map((err, i) => (
+                <p
+                  className="text-sm font-light text-center text-neutral-50 mb-2"
+                  key={i}
+                >
                   {err}
                 </p>
               ))}

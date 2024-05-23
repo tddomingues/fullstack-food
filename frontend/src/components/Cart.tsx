@@ -37,6 +37,8 @@ const Cart = () => {
 
   const { token } = useUserInfo();
 
+  console.log(cart);
+
   const quantityOfProducts = cart.reduce((previous, current) => {
     return previous + current.quantity;
   }, 0);
