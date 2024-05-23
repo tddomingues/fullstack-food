@@ -8,7 +8,12 @@ const createItem = async (request: Request, response: Response) => {
 
   const imageUrl = request.file?.filename;
 
+  const role = request.userInfo?.role;
+
   try {
+    if (role !== "admin")
+      return response.status(400).json({ error: ["Sem permissão."] });
+
     const item = await Product.create({
       name,
       price,
@@ -64,11 +69,13 @@ const getByCategory = async (request: Request, response: Response) => {
 
 const deleteItem = async (request: Request, response: Response) => {
   const { _id } = request.params;
-
+  const email = request.userInfo?.email;
+  const role = request.userInfo?.email;
   try {
-    const userEmail = request.userEmail;
+    if (role !== "admin")
+      return response.status(400).json({ error: ["Sem permissão."] });
 
-    const user = await User.findOne({ email: userEmail });
+    const user = await User.findOne({ email });
 
     if (user?.role === "client")
       return response
@@ -94,9 +101,14 @@ const editProduct = async (request: Request, response: Response) => {
   const { id } = request.params;
   const { name, category, price, description }: MenuProps = request.body;
 
+  const role = request.userInfo?.role;
+
   try {
+    if (role !== "admin")
+      return response.status(400).json({ error: ["Sem permissão."] });
+
     const produto = await Product.findById({ _id: id }).exec();
-    console.log(request.file?.filename);
+
     if (!produto)
       return response.status(400).json({ error: ["Produto não encontrado."] });
 

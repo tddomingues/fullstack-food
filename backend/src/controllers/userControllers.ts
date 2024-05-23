@@ -10,8 +10,6 @@ const register = async (request: Request, response: Response) => {
   const { name, email, role, password, confirmPassword }: UserProps =
     request.body;
 
-  console.log(name);
-
   try {
     const userExist = await User.findOne({ email });
 
@@ -52,7 +50,10 @@ const login = async (request: Request, response: Response) => {
     if (!comparePassword)
       return response.status(400).json({ error: ["Senha inválida."] });
 
-    const token = jwt.sign({ userEmail: user.email }, "secredokey");
+    const token = jwt.sign(
+      { email: user.email, role: user.role },
+      "secredokey",
+    );
 
     return response
       .cookie("token", token, {
@@ -79,13 +80,10 @@ const logout = async (request: Request, response: Response) => {
 
 const getUser = async (request: Request, response: Response) => {
   try {
-    const userEmail = request.userEmail;
+    const email = request.userInfo?.email;
 
-    console.log(userEmail);
+    const user = await User.findOne({ email });
 
-    const user = await User.findOne({ email: userEmail });
-
-    console.log("email do user", userEmail);
     if (!user)
       return response.status(400).json({ error: ["Usuário não cadastrado."] });
 

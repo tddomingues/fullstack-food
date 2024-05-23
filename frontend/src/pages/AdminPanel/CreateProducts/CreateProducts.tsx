@@ -1,13 +1,22 @@
-import { createProduct, reset } from "../../../slice/productSlice";
-
-import { Button } from "../../../components/ui/button";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+
+//router
+import { useNavigate } from "react-router-dom";
+
+//styles
+import { Loader2 } from "lucide-react";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+
+//redux
+import { createProduct, reset } from "../../../slice/productSlice";
 import { AppDispatch, IRootState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
+
+//components
+import { Button } from "../../../components/ui/button";
+
+//hooks
 import { useUserInfo } from "../../../hooks/useUserInfo";
-import { useNavigate } from "react-router-dom";
-import { MdOutlineAddPhotoAlternate } from "react-icons/md";
-import { Loader2 } from "lucide-react";
 
 const CreateProducts = () => {
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -36,8 +45,6 @@ const CreateProducts = () => {
     (state) => state.product.loading,
   );
 
-  console.log(success);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -51,8 +58,6 @@ const CreateProducts = () => {
     const file = imageRef.current?.files ? imageRef.current.files[0] : null;
 
     if (file) formData.append("file", file);
-
-    console.log(formData);
 
     const data = {
       formData,
@@ -76,6 +81,7 @@ const CreateProducts = () => {
   useEffect(() => {
     dispatch(reset());
   }, [dispatch]);
+
   return (
     <section className="flex">
       <div className="p-4 rounded-md bg-neutral-200 w-full">

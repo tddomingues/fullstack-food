@@ -1,7 +1,13 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { productService } from "../service/productService";
-import { ProductProps } from "../interfaces/ProductProps";
 import Cookies from "js-cookie";
+
+//redux
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+
+//service
+import { productService } from "../service/productService";
+
+//interfaces
+import { ProductProps } from "../interfaces/ProductProps";
 
 interface IinitialState {
   success: string | null;
@@ -19,27 +25,36 @@ const initialState: IinitialState = {
   products: [],
 };
 
-export const getProducts = createAsyncThunk("product/getProducts", async () => {
-  const res = await productService.getAllProducts();
+export const getProducts = createAsyncThunk(
+  "product/getProducts",
+  async (_, thunkAPI) => {
+    const data = await productService.getAllProducts();
 
-  return res;
-});
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
+
+    return data;
+  },
+);
 
 export const getProductsByCategory = createAsyncThunk(
   "product/getProductsByCategory",
-  async (category: string) => {
-    const res = await productService.getProductsByCategory(category);
+  async (category: string, thunkAPI) => {
+    const data = await productService.getProductsByCategory(category);
 
-    return res;
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
+
+    return data;
   },
 );
 
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async ({ id, token }: { id: string; token: string }) => {
-    const res = await productService.getProduct(id, token);
+  async ({ id, token }: { id: string; token: string }, thunkAPI) => {
+    const data = await productService.getProduct(id, token);
 
-    return res;
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
+
+    return data;
   },
 );
 
@@ -49,30 +64,33 @@ export const createProduct = createAsyncThunk(
     { formData, token }: { formData: FormData; token: string },
     thunkAPI,
   ) => {
-    const res = await productService.createProduct(formData, token);
+    const data = await productService.createProduct(formData, token);
 
-    if (res.error) return thunkAPI.rejectWithValue(res.error);
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
 
-    return res;
+    return data;
   },
 );
 
 export const editProduct = createAsyncThunk(
   "product/editProduct",
-  async ({
-    formData,
-    token,
-    id,
-  }: {
-    formData: FormData;
-    token: string;
-    id: string;
-  }) => {
-    const res = await productService.editProduct(formData, token, id);
+  async (
+    {
+      formData,
+      token,
+      id,
+    }: {
+      formData: FormData;
+      token: string;
+      id: string;
+    },
+    thunkAPI,
+  ) => {
+    const data = await productService.editProduct(formData, token, id);
 
-    console.log("formData ", formData, token, id);
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
 
-    return res;
+    return data;
   },
 );
 

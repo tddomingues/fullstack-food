@@ -17,6 +17,9 @@ import { BsCart2 } from "react-icons/bs";
 //utils
 import formatCurrency from "../utils/formatCurrency";
 
+//hooks
+import { useUserInfo } from "../hooks/useUserInfo";
+
 //interfaces
 import { CartProps } from "../interfaces/CartProps";
 
@@ -32,9 +35,7 @@ const Cart = () => {
 
   const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
+  const { token } = useUserInfo();
 
   const quantityOfProducts = cart.reduce((previous, current) => {
     return previous + current.quantity;

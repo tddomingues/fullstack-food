@@ -81,14 +81,6 @@ const AppRouter = createBrowserRouter([
           },
         ],
       },
-      {
-        path: "/register",
-        element: (
-          <ProtectLoggedRoute>
-            <Register />
-          </ProtectLoggedRoute>
-        ),
-      },
     ],
   },
 ]);

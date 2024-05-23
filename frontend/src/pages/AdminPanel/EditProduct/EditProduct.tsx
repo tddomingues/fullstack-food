@@ -1,13 +1,26 @@
-import { editProduct, reset } from "../../../slice/productSlice";
-
-import { Button } from "../../../components/ui/button";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { AppDispatch, IRootState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
-import { useUserInfo } from "../../../hooks/useUserInfo";
+
+//router
 import { useNavigate, useParams } from "react-router-dom";
+
+//styles
+import { Button } from "../../../components/ui/button";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { Loader2 } from "lucide-react";
+
+//hooks
+import { useUserInfo } from "../../../hooks/useUserInfo";
+
+//interfaces
+import { ProductProps } from "../../../interfaces/ProductProps";
+
+//redux
+import { AppDispatch, IRootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { editProduct, getProduct, reset } from "../../../slice/productSlice";
+
+//components
+import Loading from "../../../components/Loading";
 
 const EditProduct = () => {
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -38,6 +51,10 @@ const EditProduct = () => {
     (state) => state.product.loading,
   );
 
+  const product = useSelector<IRootState, ProductProps | undefined>(
+    (state) => state.product.product,
+  );
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -51,18 +68,6 @@ const EditProduct = () => {
     const file = imageRef.current?.files ? imageRef.current.files[0] : null;
 
     if (file) formData.append("file", file);
-
-    // const formData = {
-    //   name: nameRef.current?.value,
-    //   description: descriptionRef.current?.value,
-    //   price: priceRef.current?.value?.toString(),
-    //   category: categoryRef.current?.value,
-    // };
-
-    console.log(formData.get("file"));
-    console.log(formData.get("name"));
-    console.log(formData.get("description"));
-    console.log(formData.get("category"));
 
     const data = {
       formData,
@@ -86,7 +91,11 @@ const EditProduct = () => {
 
   useEffect(() => {
     dispatch(reset());
-  }, [dispatch]);
+    dispatch(getProduct({ id: id || "", token: token || "" }));
+  }, [dispatch, id, token]);
+
+  if (loading) return <Loading />;
+
   return (
     <section className="flex">
       <div className="p-4 rounded-md bg-neutral-200 w-full">
@@ -111,7 +120,15 @@ const EditProduct = () => {
                     size={40}
                     className="text-neutral-300"
                   />
-                  <img src={viewImage || ""} alt="" className="absolute z-10" />
+                  <img
+                    src={
+                      viewImage
+                        ? viewImage
+                        : `http://localhost:3000/uploads/${product?.imageUrl}`
+                    }
+                    alt=""
+                    className="absolute z-10"
+                  />
                 </div>
               </label>
             </div>
@@ -125,6 +142,7 @@ const EditProduct = () => {
                     id=""
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
                     ref={nameRef}
+                    placeholder={product?.name}
                   />
                 </label>
                 <label>
@@ -136,6 +154,7 @@ const EditProduct = () => {
                     min={0}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                     ref={priceRef}
+                    placeholder={product?.price.toString()}
                   />
                 </label>
                 <label>
@@ -160,6 +179,7 @@ const EditProduct = () => {
                   id=""
                   className="w-full p-2 rounded-md text-sm text-neutral-800"
                   ref={descriptionRef}
+                  placeholder={product?.description}
                 ></textarea>
               </label>
             </div>
@@ -185,7 +205,7 @@ const EditProduct = () => {
               Voltar
             </Button>
             <Button type="submit" variant="destructive" disabled={loading}>
-              Criar
+              Editar
               {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             </Button>
           </div>

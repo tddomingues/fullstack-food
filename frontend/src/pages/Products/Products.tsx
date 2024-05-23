@@ -1,7 +1,11 @@
+//router
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+
+//components
+import { Button } from "../../components/ui/button";
 import Navbar from "../../components/Navbar";
 
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/button";
+//hooks
 import { useUserInfo } from "../../hooks/useUserInfo";
 
 const Home = () => {

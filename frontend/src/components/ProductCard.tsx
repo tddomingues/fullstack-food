@@ -1,27 +1,27 @@
+//router
+import { useNavigate } from "react-router-dom";
+
 //styles
-import BurgerImage from "../../assets/burguer.png";
 import { FaStar } from "react-icons/fa";
 
 //utils
-import formatCurrency from "../../utils/formatCurrency";
-import { firstCapitalLetter } from "../../utils/firstCapitalLetter";
+import formatCurrency from "../utils/formatCurrency";
+import { firstCapitalLetter } from "../utils/firstCapitalLetter";
+
+//hooks
+import { useUserInfo } from "../hooks/useUserInfo";
 
 //redux
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../../store";
-import { addItemToCart } from "../../slice/cartSlice";
-import { deleteProduct, getProductsByCategory } from "../../slice/productSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+import { addItemToCart } from "../slice/cartSlice";
+import { deleteProduct } from "../slice/productSlice";
 
 //interfaces
-import { ProductProps } from "../../interfaces/ProductProps";
+import { ProductProps } from "../interfaces/ProductProps";
 
 //componets
-import { Button } from "../ui/button";
-import { UserProps } from "../../interfaces/UserProps";
-import { useEffect, useState } from "react";
-import { getUser } from "../../slice/userSlice";
-import { useUserInfo } from "../../hooks/useUserInfo";
-import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 //qualquer passagem por props deve ser um objeto
 interface ProductsCardProps {
@@ -56,7 +56,7 @@ const ProductCard = ({ products }: ProductsCardProps) => {
             <div className="border border-neutral-400 rounded-md ">
               <img
                 src={`http://localhost:3000/uploads/${product.imageUrl}`}
-                alt=""
+                alt={product.description}
                 className="transition ease-in-out delay-100 hover:scale-105"
               />
             </div>
@@ -85,7 +85,8 @@ const ProductCard = ({ products }: ProductsCardProps) => {
                 </Button>
               </div>
             )}
-            {user && user.role === "client" && (
+
+            {user?.role !== "admin" && (
               <Button
                 className="w-full"
                 variant="destructive"

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { UserProps } from "../interfaces/UserProps";
 
 const api = axios.create({
@@ -34,29 +34,25 @@ const register = async (user: UserDataForRegisterProps) => {
 };
 
 const logout = async () => {
-  try {
-    const res = await api.get("/logout");
+  const res = await api
+    .get("/logout")
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
 
-    return res.data;
-  } catch (error) {
-    return console.log(error);
-  }
+  return res;
 };
 
 const getUser = async (token: string) => {
-  console.log(token);
-
-  try {
-    const res = await api.get("/getUser", {
+  const res = await api
+    .get("/getUser", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
 
-    return res.data;
-  } catch (error) {
-    return console.log(error);
-  }
+  return res;
 };
 
 export const userService = { login, logout, getUser, register };

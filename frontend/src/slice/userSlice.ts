@@ -1,7 +1,13 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { UserProps } from "../interfaces/UserProps";
-import { userService } from "../service/userService";
 import Cookies from "js-cookie";
+
+//redux
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+//interfaces
+import { UserProps } from "../interfaces/UserProps";
+
+//servuices
+import { userService } from "../service/userService";
 
 interface IInitialState {
   user: UserProps | null;
@@ -50,16 +56,23 @@ export const register = createAsyncThunk(
 export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
   const data = await userService.logout();
 
+  if (data.error) return thunkAPI.rejectWithValue(data.error);
+
   Cookies.remove("token");
 
   return data;
 });
 
-export const getUser = createAsyncThunk("getUser", async (token: string) => {
-  const data = await userService.getUser(token);
+export const getUser = createAsyncThunk(
+  "getUser",
+  async (token: string, thunkAPI) => {
+    const data = await userService.getUser(token);
 
-  return data;
-});
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
+
+    return data;
+  },
+);
 
 const userSlice = createSlice({
   name: "slice",

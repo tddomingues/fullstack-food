@@ -1,15 +1,25 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
+//utils
 import formatCurrency from "../../utils/formatCurrency";
-import { AppDispatch, IRootState } from "../../store";
+
+//interface
 import { CartProps } from "../../interfaces/CartProps";
 
-import { Button } from "../../components/ui/button";
+//hooks
+import { useUserInfo } from "../../hooks/useUserInfo";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../../store";
+
+//router
 import { useNavigate } from "react-router-dom";
-import ProductCart from "../../components/ProductCart";
-import { useEffect } from "react";
+
+//redux
 import { getUser } from "../../slice/userSlice";
-import { UserProps } from "../../interfaces/UserProps";
+
+//components
+import ProductCart from "../../components/ProductCart";
+import { Button } from "../../components/ui/button";
 
 const CheckOrderInformation = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,13 +28,7 @@ const CheckOrderInformation = () => {
 
   const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
-
-  const user = useSelector<IRootState, UserProps | null>(
-    (state) => state.user.user,
-  );
+  const { token, user } = useUserInfo();
 
   const totalPrice = cart.reduce((previous, current) => {
     return previous + current.subTotalPrice;

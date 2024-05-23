@@ -1,7 +1,12 @@
+import { useEffect } from "react";
+
+//interfaces
+import { UserProps } from "../interfaces/UserProps";
+
+//redux
+
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../store";
-import { UserProps } from "../interfaces/UserProps";
-import { useEffect } from "react";
 import { getUser } from "../slice/userSlice";
 
 export const useUserInfo = () => {
@@ -19,9 +24,17 @@ export const useUserInfo = () => {
     (state) => state.user.loading,
   );
 
+  const success = useSelector<IRootState, boolean>(
+    (state) => state.user.success,
+  );
+
+  const error = useSelector<IRootState, string[] | null>(
+    (state) => state.user.error,
+  );
+
   useEffect(() => {
     dispatch(getUser(token || ""));
   }, [dispatch, token]);
 
-  return { user, token, loading };
+  return { user, token, loading, error, success };
 };

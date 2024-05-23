@@ -1,9 +1,15 @@
 import { useEffect } from "react";
-import ProductCard from "../../../components/ProductCard/ProductCard";
-import { getProductsByCategory } from "../../../slice/productSlice";
-import { ProductProps } from "../../../interfaces/ProductProps";
-import { AppDispatch, IRootState } from "../../../store";
+
+//redux
 import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../../../store";
+import { getProductsByCategory } from "../../../slice/productSlice";
+
+//interfaces
+import { ProductProps } from "../../../interfaces/ProductProps";
+
+//components
+import ProductCard from "../../../components/ProductCard";
 import Loading from "../../../components/Loading";
 
 const Pizzas = () => {

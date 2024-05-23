@@ -1,10 +1,12 @@
 //styles
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
-import BurgerImage from "../assets/burguer.png";
+
 //utils
 import formatCurrency from "../utils/formatCurrency";
+
 //interfaces
 import { CartProps } from "../interfaces/CartProps";
+
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../store";
@@ -47,7 +49,10 @@ const ProductCart = () => {
             >
               <div className="flex gap-2 items-center">
                 <div className="w-[80px] border border-neutral-400 rounded-md ">
-                  <img src={BurgerImage} alt="" />
+                  <img
+                    src={`http://localhost:3000/uploads/${productCart.imageUrl}`}
+                    alt={productCart.description}
+                  />
                 </div>
                 <div className="">
                   <h4 className="font-semibold">{productCart.name}</h4>

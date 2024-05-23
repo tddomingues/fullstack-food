@@ -1,13 +1,14 @@
 import { ReactNode, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { IRootState } from "../store";
+
+//router
 import { useNavigate } from "react-router-dom";
+
+//hooks
+import { useUserInfo } from "../hooks/useUserInfo";
 
 //proteger rota logado
 const ProtectLoggedRoute = ({ children }: { children: ReactNode }) => {
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
+  const { token } = useUserInfo();
 
   const navigate = useNavigate();
 

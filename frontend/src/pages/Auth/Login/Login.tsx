@@ -4,12 +4,13 @@ import { FormEvent, useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 //redux
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../../../store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../store";
 import { login } from "../../../slice/userSlice";
 
 //components
 import { Button } from "../../../components/ui/button";
+import { useUserInfo } from "../../../hooks/useUserInfo";
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -17,11 +18,7 @@ const Login = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const error = useSelector<IRootState, string[] | null>(
-    (state) => state.user.error,
-  );
-
-  console.log("error: ", error);
+  const { error } = useUserInfo();
 
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
@@ -35,6 +32,7 @@ const Login = () => {
       email: emailRef.current?.value || "",
       password: passwordRef.current?.value || "",
     };
+
     dispatch(login(user));
   };
 

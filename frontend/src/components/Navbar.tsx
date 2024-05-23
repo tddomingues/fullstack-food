@@ -7,28 +7,27 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
   MenubarTrigger,
 } from "./ui/menubar";
 import Cart from "./Cart";
 import { Button } from "./ui/button";
+
+//hooks
+import { useUserInfo } from "../hooks/useUserInfo";
 
 //styles
 import { BsPerson } from "react-icons/bs";
 import { LuLogOut } from "react-icons/lu";
 
 //redux
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
 import { logout } from "../slice/userSlice";
-import { useUserInfo } from "../hooks/useUserInfo";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
   const { token, user } = useUserInfo();
-
-  console.log("user user user ", user);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -54,7 +53,7 @@ const Navbar = () => {
               </li>
             </>
           )}
-          {user && user.role === "client" && (
+          {user?.role !== "admin" && (
             <li className="relative cursor-pointer ">
               <Cart />
             </li>
@@ -67,26 +66,17 @@ const Navbar = () => {
                 <BsPerson className="text-destructive text-3xl hover:text-destructive/90" />
               </MenubarTrigger>
               <MenubarContent>
-                {token && (
+                {user?.role === "client" && (
                   <MenubarItem>
                     <NavLink
                       to="/perfil"
                       className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
                     >
-                      Meus Dados
+                      Pedidos
                     </NavLink>
                   </MenubarItem>
                 )}
-                <MenubarItem>
-                  <NavLink
-                    to="/admin-painel"
-                    className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
-                  >
-                    Admin
-                  </NavLink>
-                </MenubarItem>
-                {/* <MenubarSeparator /> */}
-                <MenubarSeparator />
+
                 <MenubarItem onClick={handleLogout}>
                   <div className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer flex gap-2 items-center">
                     <span>Sair</span>

@@ -1,9 +1,18 @@
+import { FormEvent, useRef } from "react";
+
+//hooks
+import { useUserInfo } from "../../../hooks/useUserInfo";
+
+//router
 import { NavLink, Navigate } from "react-router-dom";
-import { Button } from "../../../components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../../../store";
-import { FormEvent, useEffect, useRef } from "react";
+
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../store";
 import { register } from "../../../slice/userSlice";
+
+//components
+import { Button } from "../../../components/ui/button";
 
 const Register = () => {
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -11,13 +20,7 @@ const Register = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
 
-  const error = useSelector<IRootState, string[] | null>(
-    (state) => state.user.error,
-  );
-
-  const success = useSelector<IRootState, boolean>(
-    (state) => state.user.success,
-  );
+  const { error, success } = useUserInfo();
 
   const dispatch = useDispatch<AppDispatch>();
 

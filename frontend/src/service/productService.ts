@@ -5,23 +5,21 @@ const api = axios.create({
 });
 
 const getAllProducts = async () => {
-  try {
-    const products = await api.get("/getProducts");
+  const res = await api
+    .get("/getProducts")
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
 
-    return products.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return res;
 };
 
 const getProductsByCategory = async (category: string) => {
-  try {
-    const products = await api.get(`/category/${category}`);
+  const res = await api
+    .get(`/category/${category}`)
+    .then((res) => res.data)
+    .catch((err) => err.response.data);
 
-    return products.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return res;
 };
 
 const getProduct = async (id: string, token: string) => {
@@ -59,8 +57,6 @@ const editProduct = async (data: FormData, token: string, id: string) => {
     })
     .then((res) => res.data)
     .catch((err) => err.response.data);
-
-  console.log(data);
 
   return res;
 };

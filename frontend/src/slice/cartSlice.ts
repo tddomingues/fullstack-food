@@ -1,4 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+//interfaces
 import { ProductProps } from "../interfaces/ProductProps";
 import { CartProps } from "../interfaces/CartProps";
 

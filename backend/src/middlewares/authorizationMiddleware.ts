@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export interface JwtPayload {
-  userEmail: string;
+  email: string;
+  role: string;
 }
 
 const validateToken = (
@@ -16,9 +17,9 @@ const validateToken = (
     if (!token)
       return response.status(400).json({ error: "Token não encontrado." });
 
-    const { userEmail } = jwt.verify(token, "secredokey") as JwtPayload;
+    const { email, role } = jwt.verify(token, "secredokey") as JwtPayload;
 
-    request.userEmail = userEmail;
+    request.userInfo = { email, role };
 
     return next();
   } catch (error) {
