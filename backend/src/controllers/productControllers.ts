@@ -70,7 +70,7 @@ const getByCategory = async (request: Request, response: Response) => {
 const deleteItem = async (request: Request, response: Response) => {
   const { _id } = request.params;
   const email = request.userInfo?.email;
-  const role = request.userInfo?.email;
+  const role = request.userInfo?.role;
   try {
     if (role !== "admin")
       return response.status(400).json({ error: ["Sem permissão."] });

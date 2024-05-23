@@ -19,6 +19,9 @@ import { useUserInfo } from "../hooks/useUserInfo";
 import { BsPerson } from "react-icons/bs";
 import { LuLogOut } from "react-icons/lu";
 
+//image
+import Perfil from "../assets/perfil.jpg";
+
 //redux
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
@@ -62,8 +65,13 @@ const Navbar = () => {
         {token && (
           <Menubar>
             <MenubarMenu>
-              <MenubarTrigger className="cursor-pointer ">
-                <BsPerson className="text-destructive text-3xl hover:text-destructive/90" />
+              <MenubarTrigger className="cursor-pointer">
+                <img
+                  src={Perfil}
+                  alt="Imagem de perfil"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-sm font-normal ml-2">{`Olá, ${user?.name}!`}</span>
               </MenubarTrigger>
               <MenubarContent>
                 {user?.role === "client" && (

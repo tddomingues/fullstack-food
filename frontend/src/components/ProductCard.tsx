@@ -22,6 +22,18 @@ import { ProductProps } from "../interfaces/ProductProps";
 
 //componets
 import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import { useToast } from "./ui/use-toast";
 
 //qualquer passagem por props deve ser um objeto
 interface ProductsCardProps {
@@ -33,6 +45,8 @@ const ProductCard = ({ products }: ProductsCardProps) => {
 
   const { user } = useUserInfo();
 
+  const { toast } = useToast();
+
   const navigate = useNavigate();
 
   const handleDeleteProduct = async (_id: string) => {
@@ -43,6 +57,11 @@ const ProductCard = ({ products }: ProductsCardProps) => {
 
   const handleAddItemToCart = (product: ProductProps) => {
     dispatch(addItemToCart(product));
+
+    toast({
+      title: "Que Delícia!!! 🤤",
+      description: "Produto adicionado ao carrinho.",
+    });
   };
 
   return (
@@ -76,13 +95,32 @@ const ProductCard = ({ products }: ProductsCardProps) => {
                 >
                   Editar
                 </Button>
-                <Button
-                  className="flex-1"
-                  variant="destructive"
-                  onClick={() => handleDeleteProduct(product._id)}
-                >
-                  Excluir
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="flex-1" variant="destructive">
+                      Excluir
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Deseja excluir o produto?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        O Produto será excluido permanentemente.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteProduct(product._id)}
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
 

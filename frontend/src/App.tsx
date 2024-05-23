@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
 
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "../src/components/ui/toaster";
 
 function App() {
   return (
     <>
       <Outlet />
-      <ToastContainer autoClose={2000} />
+      <Toaster />
     </>
   );
 }

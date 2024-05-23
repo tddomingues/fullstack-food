@@ -56,10 +56,10 @@ const Cart = () => {
   return (
     <Sheet>
       <SheetTrigger>
-        <BsCart2 className="text-destructive hover:text-destructive/90 text-3xl" />
+        <BsCart2 className="text-destructive hover:text-destructive/90 text-2xl" />
 
         {quantityOfProducts !== 0 && (
-          <div className="bg-yellow-500 rounded-full absolute top-[-6px] right-[-6px] min-w-5 min-h-5 flex items-center justify-center">
+          <div className="bg-yellow-500 rounded-full absolute top-[-8px] right-[-8px] min-w-5 min-h-5 flex items-center justify-center">
             <span className="text-xs font-semibold">{quantityOfProducts}</span>
           </div>
         )}
