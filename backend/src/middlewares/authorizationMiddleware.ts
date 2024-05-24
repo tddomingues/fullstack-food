@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 export interface JwtPayload {
   email: string;
   role: string;
+  id: string;
 }
 
 const validateToken = (
@@ -17,9 +18,9 @@ const validateToken = (
     if (!token)
       return response.status(400).json({ error: "Token não encontrado." });
 
-    const { email, role } = jwt.verify(token, "secredokey") as JwtPayload;
+    const { email, role, id } = jwt.verify(token, "secredokey") as JwtPayload;
 
-    request.userInfo = { email, role };
+    request.userInfo = { email, role, id };
 
     return next();
   } catch (error) {

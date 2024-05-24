@@ -51,7 +51,7 @@ const login = async (request: Request, response: Response) => {
       return response.status(400).json({ error: ["Senha inválida."] });
 
     const token = jwt.sign(
-      { email: user.email, role: user.role },
+      { email: user.email, role: user.role, id: user._id },
       "secredokey",
     );
 

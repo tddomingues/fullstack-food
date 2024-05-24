@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import Product from "../model/product";
-import { MenuProps } from "../interface/MenuProps";
+import { ProductProps } from "../interface/ProductProps";
 import User from "../model/user";
 
 const createItem = async (request: Request, response: Response) => {
-  const { name, price, category, description }: MenuProps = request.body;
+  const { name, price, category, description }: ProductProps = request.body;
 
   const imageUrl = request.file?.filename;
 
@@ -99,7 +99,7 @@ const deleteItem = async (request: Request, response: Response) => {
 
 const editProduct = async (request: Request, response: Response) => {
   const { id } = request.params;
-  const { name, category, price, description }: MenuProps = request.body;
+  const { name, category, price, description }: ProductProps = request.body;
 
   const role = request.userInfo?.role;
 

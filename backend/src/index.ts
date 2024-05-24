@@ -5,6 +5,7 @@ import main from "./config/db";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import { addressRoutes } from "./routes/addressRoutes";
 
 const app: Express = express();
 
@@ -21,6 +22,7 @@ app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.use("/user", userRouter);
 app.use("/product", productRoutes);
+app.use("/address", addressRoutes);
 
 main();
 

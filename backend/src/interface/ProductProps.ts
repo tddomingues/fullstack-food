@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 
-export interface MenuProps extends Document {
+export interface ProductProps extends Document {
   name: string | undefined;
   category: string | undefined;
   price: string | undefined;
