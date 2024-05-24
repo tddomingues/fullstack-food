@@ -3,4 +3,5 @@ export interface UserProps {
   email: string;
   password: string;
   role?: string;
+  _id: string;
 }

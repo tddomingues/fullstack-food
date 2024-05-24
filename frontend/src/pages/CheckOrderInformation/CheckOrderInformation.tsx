@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 
 //utils
 import formatCurrency from "../../utils/formatCurrency";
@@ -20,36 +20,82 @@ import { getUser } from "../../slice/userSlice";
 //components
 import ProductCart from "../../components/ProductCart";
 import { Button } from "../../components/ui/button";
-import { getAddress } from "../../slice/addressSlice";
+import {
+  createAddress,
+  getAddress,
+  updateAddress,
+} from "../../slice/addressSlice";
 import { AddressProps } from "../../interfaces/AddressProps";
+import Loading from "../../components/Loading";
+import { Loader2 } from "lucide-react";
 
 const CheckOrderInformation = () => {
-  const addressRef = useRef(null);
-  const cityRef = useRef(null);
-  const stateRef = useRef(null);
-  const postalCodeRef = useRef(null);
+  const addressRef = useRef<HTMLInputElement | null>(null);
+  const cityRef = useRef<HTMLSelectElement | null>(null);
+  const stateRef = useRef<HTMLSelectElement | null>(null);
+  const postalCodeRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
+
   const address = useSelector<IRootState, AddressProps | null>(
     (state) => state.address.address,
   );
+
+  const error = useSelector<IRootState, string[] | null>(
+    (state) => state.address.error,
+  );
+
+  console.log(error);
+
+  const loading = useSelector<IRootState, boolean>(
+    (state) => state.address.loading,
+  );
+
   const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
-  console.log(address);
   const { token, user } = useUserInfo();
+
+  console.log(address);
 
   const totalPrice = cart.reduce((previous, current) => {
     return previous + current.subTotalPrice;
   }, 0);
 
-  const handleLogin = () => {};
+  const handleCreateAddress = (e: FormEvent) => {
+    e.preventDefault();
+
+    const address: AddressProps = {
+      address: addressRef.current?.value,
+      city: cityRef.current?.value,
+      state: stateRef.current?.value,
+      postalCode: postalCodeRef.current?.value,
+      userId: user?._id,
+    };
+
+    dispatch(createAddress({ address, token: token || "" }));
+  };
+
+  const handleUpdateAddress = (e: FormEvent) => {
+    e.preventDefault();
+
+    const address: AddressProps = {
+      address: addressRef.current?.value,
+      city: cityRef.current?.value,
+      state: stateRef.current?.value,
+      postalCode: postalCodeRef.current?.value,
+      userId: user?._id,
+    };
+
+    dispatch(updateAddress({ address, token: token || "" }));
+  };
 
   useEffect(() => {
-    dispatch(getUser(token || ""));
     dispatch(getAddress(token || ""));
   }, [dispatch, token]);
+
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -89,7 +135,9 @@ const CheckOrderInformation = () => {
               <h2 className="font-semibold text-lg mb-1">Endereço</h2>
               <form
                 className="flex flex-col gap-4 p-2 rounded-md border border-neutral-400 "
-                onSubmit={handleLogin}
+                onSubmit={
+                  address === null ? handleCreateAddress : handleUpdateAddress
+                }
               >
                 <label>
                   <span className="block mb-1 text-sm font-medium">
@@ -142,19 +190,30 @@ const CheckOrderInformation = () => {
                   />
                 </label>
 
-                {/* {error && (
-          <div className="pt-2 px-2 bg-destructive rounded-md">
-            {error &&
-              error.map((err) => (
-                <p className="text-sm font-light text-center text-neutral-50 mb-2">
-                  {err}
-                </p>
-              ))}
-          </div>
-        )} */}
+                {error && (
+                  <div className="pt-2 px-2 bg-destructive rounded-md">
+                    {error &&
+                      error.map((err) => (
+                        <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                          {err}
+                        </p>
+                      ))}
+                  </div>
+                )}
 
                 <div className="flex justify-end mt-4">
-                  <Button variant="destructive">Atualizar</Button>
+                  {address === null ? (
+                    <Button variant="destructive" onClick={handleCreateAddress}>
+                      Inserir
+                    </Button>
+                  ) : (
+                    <Button variant="destructive" disabled={loading}>
+                      Atualizar
+                      {loading && (
+                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                      )}
+                    </Button>
+                  )}
                 </div>
               </form>
             </section>
