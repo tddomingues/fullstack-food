@@ -8,18 +8,20 @@ import formatCurrency from "../utils/formatCurrency";
 import { CartProps } from "../interfaces/CartProps";
 
 //redux
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
 import {
   addQuantityOfProductsInCart,
   reducerQuantityOfProductsInCart,
   removeItemToCart,
 } from "../slice/cartSlice";
+import { useCart } from "../hooks/useCart";
+import { quantityOfProducts } from "../utils/ManipulateCartInfo";
 
 const ProductCart = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
+  const cart = useCart();
 
   const handleAddQuantityOfProductsInCart = (product: CartProps) => {
     dispatch(addQuantityOfProductsInCart(product));
@@ -33,14 +35,14 @@ const ProductCart = () => {
     dispatch(removeItemToCart(product));
   };
 
-  const quantityOfProducts = cart.reduce((previous, current) => {
-    return previous + current.quantity;
-  }, 0);
+  const handleQuantityOfProducts = quantityOfProducts(cart);
 
   return (
     <div className="h-5/6 overflow-y-auto my-2">
       <div className="flex flex-col gap-3">
-        {quantityOfProducts === 0 && <p className="font-semibold">Vazio</p>}
+        {handleQuantityOfProducts === 0 && (
+          <p className="font-semibold">Vazio</p>
+        )}
         {cart &&
           cart.map((productCart) => (
             <div

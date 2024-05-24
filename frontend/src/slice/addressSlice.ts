@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addressService } from "../service/addressService";
 import { AddressProps } from "../interfaces/AddressProps";
 
@@ -61,44 +61,43 @@ const addressSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAddress.pending, (state, action) => {
+      .addCase(getAddress.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getAddress.fulfilled, (state, action) => {
-        state.address = action.payload;
-        state.loading = false;
-      })
+      .addCase(
+        getAddress.fulfilled,
+        (state, action: PayloadAction<AddressProps>) => {
+          state.address = action.payload;
+          state.loading = false;
+        },
+      )
       .addCase(getAddress.rejected, (state, action) => {
         state.address = null;
-        state.error = action.payload;
+        state.error = action.payload as string[];
         state.loading = false;
       })
-      .addCase(updateAddress.pending, (state, action) => {
+      .addCase(updateAddress.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateAddress.fulfilled, (state, action) => {
+      .addCase(updateAddress.fulfilled, (state) => {
         state.loading = false;
         state.success = "Atualizado com sucesso.";
       })
       .addCase(updateAddress.rejected, (state, action) => {
-        state.error = action.payload;
+        state.error = action.payload as string[];
         state.loading = false;
       })
-      .addCase(createAddress.pending, (state, action) => {
+      .addCase(createAddress.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createAddress.fulfilled, (state, action) => {
+      .addCase(createAddress.fulfilled, (state) => {
         state.loading = false;
         state.success = "Atualizado com sucesso.";
       })
       .addCase(createAddress.rejected, (state, action) => {
-        state.error = action.payload;
+        state.error = action.payload as string[];
         state.loading = false;
       });
-
-    // .addCase(createAddress.fulfilled, (state, action) => {
-    //   state.address = action.payload;
-    // })
   },
 });
 

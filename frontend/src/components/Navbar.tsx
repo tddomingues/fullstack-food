@@ -76,16 +76,6 @@ const Navbar = () => {
                 {user?.role === "client" && (
                   <MenubarItem>
                     <NavLink
-                      to="/profile/info"
-                      className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
-                    >
-                      Perfil
-                    </NavLink>
-                  </MenubarItem>
-                )}
-                {user?.role === "client" && (
-                  <MenubarItem>
-                    <NavLink
                       to="/profile/order"
                       className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
                     >

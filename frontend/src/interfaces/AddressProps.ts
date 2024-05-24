@@ -1,7 +1,7 @@
 export interface AddressProps {
-  address: string | undefined;
-  city: string | undefined;
-  state: string | undefined;
-  postalCode: string | undefined;
-  userId: string | undefined;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  userId?: string;
 }

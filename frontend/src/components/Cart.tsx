@@ -19,40 +19,25 @@ import formatCurrency from "../utils/formatCurrency";
 
 //hooks
 import { useUserInfo } from "../hooks/useUserInfo";
-
-//interfaces
-import { CartProps } from "../interfaces/CartProps";
-
-//redux
-import { useSelector } from "react-redux";
-import { IRootState } from "../store";
+import { useCart } from "../hooks/useCart";
 
 //router
 import { useNavigate } from "react-router-dom";
+import { quantityOfProducts, totalPrice } from "../utils/ManipulateCartInfo";
 
 const Cart = () => {
   const navigate = useNavigate();
 
-  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
+  const cart = useCart();
 
   const { token } = useUserInfo();
 
-  console.log(cart);
+  const handleQuantityOfProducts = quantityOfProducts(cart);
 
-  const quantityOfProducts = cart.reduce((previous, current) => {
-    return previous + current.quantity;
-  }, 0);
-
-  const totalPrice = cart.reduce((previous, current) => {
-    return previous + current.subTotalPrice;
-  }, 0);
+  const handleTotalPrice = totalPrice(cart);
 
   const handleCheckOrderInformation = () => {
-    if (token) {
-      navigate("/check-order-information");
-    } else {
-      navigate("/login");
-    }
+    token ? navigate("/check-order-information") : navigate("/login");
   };
 
   return (
@@ -60,9 +45,11 @@ const Cart = () => {
       <SheetTrigger>
         <BsCart2 className="text-destructive hover:text-destructive/90 text-2xl" />
 
-        {quantityOfProducts !== 0 && (
+        {handleQuantityOfProducts !== 0 && (
           <div className="bg-yellow-500 rounded-full absolute top-[-8px] right-[-8px] min-w-5 min-h-5 flex items-center justify-center">
-            <span className="text-xs font-semibold">{quantityOfProducts}</span>
+            <span className="text-xs font-semibold">
+              {handleQuantityOfProducts}
+            </span>
           </div>
         )}
       </SheetTrigger>
@@ -74,7 +61,7 @@ const Cart = () => {
         <div className="mb-2 mt-2 flex justify-end items-center gap-4">
           <span className="font-semibold">Preço Total:</span>
           <strong className="font-semibold">
-            {formatCurrency(Number(totalPrice))}
+            {formatCurrency(handleTotalPrice)}
           </strong>
         </div>
         <SheetFooter className="">
@@ -82,7 +69,7 @@ const Cart = () => {
             <Button
               type="submit"
               variant="destructive"
-              disabled={quantityOfProducts === 0}
+              disabled={handleQuantityOfProducts === 0}
               onClick={handleCheckOrderInformation}
             >
               Finalizar Compra

@@ -9,14 +9,15 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 //redux
 import { createProduct, reset } from "../../../slice/productSlice";
-import { AppDispatch, IRootState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../store";
+import { useDispatch } from "react-redux";
 
 //components
 import { Button } from "../../../components/ui/button";
 
 //hooks
 import { useUserInfo } from "../../../hooks/useUserInfo";
+import { useProduct } from "../../../hooks/useProduct";
 
 const CreateProducts = () => {
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -29,21 +30,13 @@ const CreateProducts = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { token } = useUserInfo();
-
   const navigate = useNavigate();
 
-  const success = useSelector<IRootState, string | null>(
-    (state) => state.product.success,
-  );
+  console.log("click");
 
-  const error = useSelector<IRootState, string[] | null>(
-    (state) => state.product.error,
-  );
+  const { token } = useUserInfo();
 
-  const loading = useSelector<IRootState, boolean>(
-    (state) => state.product.loading,
-  );
+  const { error, loading, success } = useProduct({ category: undefined });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -67,6 +60,7 @@ const CreateProducts = () => {
     dispatch(createProduct(data));
 
     setViewImage("");
+
     nameRef.current!.value = "";
     descriptionRef.current!.value = "";
     priceRef.current!.value = "";
@@ -116,7 +110,7 @@ const CreateProducts = () => {
                   <img
                     src={viewImage || ""}
                     alt=""
-                    className="absolute z-10 h-full object-contain p-2"
+                    className="absolute z-10 h-full p-4"
                   />
                 </div>
               </label>

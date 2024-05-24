@@ -1,33 +1,26 @@
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 //utils
 import formatCurrency from "../../utils/formatCurrency";
 
-//interface
-import { CartProps } from "../../interfaces/CartProps";
-
 //hooks
 import { useUserInfo } from "../../hooks/useUserInfo";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, IRootState } from "../../store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
 
 //router
 import { useNavigate } from "react-router-dom";
 
-//redux
-import { getUser } from "../../slice/userSlice";
-
 //components
 import ProductCart from "../../components/ProductCart";
 import { Button } from "../../components/ui/button";
-import {
-  createAddress,
-  getAddress,
-  updateAddress,
-} from "../../slice/addressSlice";
+import { createAddress, updateAddress } from "../../slice/addressSlice";
 import { AddressProps } from "../../interfaces/AddressProps";
 import Loading from "../../components/Loading";
 import { Loader2 } from "lucide-react";
+import { useAddress } from "../../hooks/useAddress";
+import { totalPrice } from "../../utils/ManipulateCartInfo";
+import { useCart } from "../../hooks/useCart";
 
 const CheckOrderInformation = () => {
   const addressRef = useRef<HTMLInputElement | null>(null);
@@ -35,33 +28,19 @@ const CheckOrderInformation = () => {
   const stateRef = useRef<HTMLSelectElement | null>(null);
   const postalCodeRef = useRef<HTMLInputElement | null>(null);
 
+  const [noAddressError, setNoAddressError] = useState<string | null>(null);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
-  const address = useSelector<IRootState, AddressProps | null>(
-    (state) => state.address.address,
-  );
+  const { address, error, loading } = useAddress();
 
-  const error = useSelector<IRootState, string[] | null>(
-    (state) => state.address.error,
-  );
-
-  console.log(error);
-
-  const loading = useSelector<IRootState, boolean>(
-    (state) => state.address.loading,
-  );
-
-  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
+  const cart = useCart();
 
   const { token, user } = useUserInfo();
 
-  console.log(address);
-
-  const totalPrice = cart.reduce((previous, current) => {
-    return previous + current.subTotalPrice;
-  }, 0);
+  const handleTotalPrice = totalPrice(cart);
 
   const handleCreateAddress = (e: FormEvent) => {
     e.preventDefault();
@@ -91,9 +70,12 @@ const CheckOrderInformation = () => {
     dispatch(updateAddress({ address, token: token || "" }));
   };
 
-  useEffect(() => {
-    dispatch(getAddress(token || ""));
-  }, [dispatch, token]);
+  const handlePay = () => {
+    if (address === null)
+      return setNoAddressError("Preencha os campos do endereço.");
+
+    navigate("/");
+  };
 
   if (loading) return <Loading />;
 
@@ -192,12 +174,19 @@ const CheckOrderInformation = () => {
 
                 {error && (
                   <div className="pt-2 px-2 bg-destructive rounded-md">
-                    {error &&
-                      error.map((err) => (
-                        <p className="text-sm font-light text-center text-neutral-50 mb-2">
-                          {err}
-                        </p>
-                      ))}
+                    {error.map((err) => (
+                      <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                        {err}
+                      </p>
+                    ))}
+                  </div>
+                )}
+
+                {noAddressError && (
+                  <div className="pt-2 px-2 bg-destructive rounded-md">
+                    <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                      {noAddressError}
+                    </p>
                   </div>
                 )}
 
@@ -230,14 +219,20 @@ const CheckOrderInformation = () => {
           <div className="mb-2 flex justify-end items-center gap-4">
             <span className="font-semibold">Preço Total:</span>
             <strong className="font-semibold">
-              {formatCurrency(Number(totalPrice))}
+              {formatCurrency(handleTotalPrice)}
             </strong>
           </div>
           <div className="flex justify-between bg-neutral-100 rounded-md p-2">
             <Button variant="outline" onClick={() => navigate("/")}>
               Voltar
             </Button>
-            <Button variant="destructive">Pagar</Button>
+            <Button
+              variant="destructive"
+              onClick={handlePay}
+              disabled={cart.length === 0}
+            >
+              Pagar
+            </Button>
           </div>
         </div>
       </main>

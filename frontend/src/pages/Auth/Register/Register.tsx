@@ -40,7 +40,7 @@ const Register = () => {
   if (success) return <Navigate to="/login" />;
 
   return (
-    <section className="p-4 rounded-md shadow-md w-[400px] border">
+    <section className="p-4 border border-neutral-400 rounded-md w-[400px]">
       <h1 className="text-2xl font-semibold mb-8">Registrar</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <label>

@@ -127,7 +127,7 @@ const EditProduct = () => {
                         : `http://localhost:3000/uploads/${product?.imageUrl}`
                     }
                     alt=""
-                    className="absolute z-10"
+                    className="absolute z-10 h-full p-4"
                   />
                 </div>
               </label>
@@ -142,7 +142,7 @@ const EditProduct = () => {
                     id=""
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
                     ref={nameRef}
-                    placeholder={product?.name}
+                    defaultValue={product?.name}
                   />
                 </label>
                 <label>
@@ -154,7 +154,7 @@ const EditProduct = () => {
                     min={0}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                     ref={priceRef}
-                    placeholder={product?.price.toString()}
+                    defaultValue={product?.price.toString()}
                   />
                 </label>
                 <label>
@@ -164,10 +164,9 @@ const EditProduct = () => {
                     id=""
                     className=" p-2 rounded-md text-sm text-neutral-800"
                     ref={categoryRef}
+                    defaultValue={product?.category}
                   >
-                    <option value="" selected>
-                      --Nenhum--
-                    </option>
+                    <option value="">--Nenhum--</option>
                     <option value="burguer">Hamburguer</option>
                     <option value="pizza">Pizza</option>
                     <option value="drink">Bebida</option>
@@ -182,7 +181,7 @@ const EditProduct = () => {
                   id=""
                   className="w-full p-2 rounded-md text-sm text-neutral-800"
                   ref={descriptionRef}
-                  placeholder={product?.description}
+                  defaultValue={product?.description}
                 ></textarea>
               </label>
             </div>
