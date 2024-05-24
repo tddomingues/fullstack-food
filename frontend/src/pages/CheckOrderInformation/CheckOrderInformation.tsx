@@ -20,6 +20,8 @@ import { getUser } from "../../slice/userSlice";
 //components
 import ProductCart from "../../components/ProductCart";
 import { Button } from "../../components/ui/button";
+import { getAddress } from "../../slice/addressSlice";
+import { AddressProps } from "../../interfaces/AddressProps";
 
 const CheckOrderInformation = () => {
   const addressRef = useRef(null);
@@ -30,9 +32,12 @@ const CheckOrderInformation = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
-
+  const address = useSelector<IRootState, AddressProps | null>(
+    (state) => state.address.address,
+  );
   const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
+  console.log(address);
   const { token, user } = useUserInfo();
 
   const totalPrice = cart.reduce((previous, current) => {
@@ -43,6 +48,7 @@ const CheckOrderInformation = () => {
 
   useEffect(() => {
     dispatch(getUser(token || ""));
+    dispatch(getAddress(token || ""));
   }, [dispatch, token]);
 
   return (
@@ -93,6 +99,7 @@ const CheckOrderInformation = () => {
                     type="text"
                     name=""
                     id=""
+                    defaultValue={address?.address}
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
                     placeholder="Informe seu e-mail"
                     ref={addressRef}
@@ -100,16 +107,26 @@ const CheckOrderInformation = () => {
                 </label>
                 <label>
                   <span className="block mb-1 text-sm font-medium">Cidade</span>
-                  <select ref={cityRef}>
+                  <select
+                    ref={cityRef}
+                    className=" p-2 rounded-md text-sm text-neutral-800"
+                  >
                     <option value="">--Nenhum--</option>
-                    <option value="maringá">Maringá</option>
+                    <option value="maringá" selected>
+                      Maringá
+                    </option>
                   </select>
                 </label>
                 <label>
                   <span className="block mb-1 text-sm font-medium">Estado</span>
-                  <select ref={stateRef}>
+                  <select
+                    ref={stateRef}
+                    className=" p-2 rounded-md text-sm text-neutral-800"
+                  >
                     <option value="">--Nenhum--</option>
-                    <option value="paraná">Paraná</option>
+                    <option value="paraná" selected>
+                      Paraná
+                    </option>
                   </select>
                 </label>
                 <label>
@@ -121,6 +138,7 @@ const CheckOrderInformation = () => {
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
                     placeholder="Informe sua senha"
                     ref={postalCodeRef}
+                    defaultValue={address?.postalCode}
                   />
                 </label>
 
@@ -136,7 +154,7 @@ const CheckOrderInformation = () => {
         )} */}
 
                 <div className="flex justify-end mt-4">
-                  <Button variant="destructive">Inserir</Button>
+                  <Button variant="destructive">Atualizar</Button>
                 </div>
               </form>
             </section>
