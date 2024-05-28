@@ -1,5 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
+import { useForm, SubmitHandler } from "react-hook-form";
+
 //router
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -8,114 +10,102 @@ import { Button } from "../../../components/ui/button";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { Loader2 } from "lucide-react";
 
-//hooks
-import { useUserInfo } from "../../../hooks/useUserInfo";
-
 //interfaces
 import { ProductProps } from "../../../interfaces/ProductProps";
 
 //redux
 import { AppDispatch, IRootState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
-import { editProduct, getProduct, reset } from "../../../slice/productSlice";
+import {
+  IinitialState,
+  editProduct,
+  getProduct,
+  reset as resetMessages,
+} from "../../../slice/productSlice";
 
 //components
 import Loading from "../../../components/Loading";
 
-const EditProduct = () => {
-  const nameRef = useRef<HTMLInputElement | null>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
-  const imageRef = useRef<HTMLInputElement | null>(null);
-  const priceRef = useRef<HTMLInputElement | null>(null);
-  const categoryRef = useRef<HTMLSelectElement | null>(null);
+interface CreateProductProps extends ProductProps {
+  file: FileList;
+}
 
+const EditProduct = () => {
   const { id } = useParams();
 
   const [viewImage, setViewImage] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { token } = useUserInfo();
+  const token = useSelector<IRootState, string | undefined>(
+    (state) => state.user.token,
+  );
 
   const navigate = useNavigate();
 
-  const success = useSelector<IRootState, string | null>(
-    (state) => state.product.success,
-  );
+  const { error, product, success, loading } = useSelector<
+    IRootState,
+    IinitialState
+  >((state) => state.product);
 
-  const error = useSelector<IRootState, string[] | null>(
-    (state) => state.product.error,
-  );
+  const { register, handleSubmit, watch, reset } =
+    useForm<CreateProductProps>();
 
-  const loading = useSelector<IRootState, boolean>(
-    (state) => state.product.loading,
-  );
+  const watchFile = watch("file");
 
-  const product = useSelector<IRootState, ProductProps | undefined>(
-    (state) => state.product.product,
-  );
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<CreateProductProps> = (data) => {
     const formData = new FormData();
 
-    formData.append("name", nameRef.current?.value || "");
-    formData.append("description", descriptionRef.current?.value || "");
-    formData.append("price", priceRef.current?.value?.toString() || "");
-    formData.append("category", categoryRef.current?.value || "");
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("category", data.category);
 
-    const file = imageRef.current?.files ? imageRef.current.files[0] : null;
+    const file = data.file.length > 0 ? data.file[0] : undefined;
 
     if (file) formData.append("file", file);
 
-    const data = {
-      formData,
-      token: token || "",
-      id: id || "",
-    };
+    if (id && token) {
+      const dataToSend = {
+        formData,
+        token: token,
+        id: id,
+      };
 
-    dispatch(editProduct(data));
-  };
-
-  const handleViewImage = (e: ChangeEvent) => {
-    e.preventDefault();
-    const target = e.target as HTMLInputElement;
-
-    if (!target.files) return;
-
-    const file = target.files[0];
-
-    setViewImage(URL.createObjectURL(file));
+      dispatch(editProduct(dataToSend));
+    }
   };
 
   useEffect(() => {
-    dispatch(reset());
-    dispatch(getProduct({ id: id || "", token: token || "" }));
+    if (watchFile?.length > 0) {
+      setViewImage(URL.createObjectURL(watchFile[0]));
+    }
+  }, [watchFile]);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
+  useEffect(() => {
+    dispatch(resetMessages());
+    id && token && dispatch(getProduct({ id: id, token: token }));
   }, [dispatch, id, token]);
 
   if (loading) return <Loading />;
 
   return (
     <section className="flex">
-      <div className="p-4 rounded-md bg-neutral-200 w-full">
-        <h1 className="text-xl font-semibold mb-8">Editar Produto</h1>
+      <div className="p-4 rounded-md bg-neutral-800 w-full">
+        <h1 className="mb-4 text-2xl font-medium">Editar Produto</h1>
         <form
           className="flex justify-center flex-col gap-4"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex justify-center gap-4 ">
             <div>
               <label className="w-full ">
-                <input
-                  type="file"
-                  name=""
-                  id=""
-                  className="hidden"
-                  ref={imageRef}
-                  onChange={handleViewImage}
-                />
-                <div className="w-[400px] h-[400px] border border-dashed border-neutral-300 bg-neutral-50 cursor-pointer flex justify-center items-center relative">
+                <input type="file" {...register("file")} className="hidden" />
+                <div className="w-[400px] h-[400px] rounded-md bg-neutral-50 cursor-pointer flex justify-center items-center relative">
                   <MdOutlineAddPhotoAlternate
                     size={40}
                     className="text-neutral-300"
@@ -127,7 +117,7 @@ const EditProduct = () => {
                         : `http://localhost:3000/uploads/${product?.imageUrl}`
                     }
                     alt=""
-                    className="absolute z-10 h-full p-4"
+                    className="absolute z-10 h-full rounded-md"
                   />
                 </div>
               </label>
@@ -138,10 +128,8 @@ const EditProduct = () => {
                   <span className="block mb-1">Nome</span>
                   <input
                     type="text"
-                    name=""
-                    id=""
+                    {...register("name")}
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                    ref={nameRef}
                     defaultValue={product?.name}
                   />
                 </label>
@@ -149,22 +137,18 @@ const EditProduct = () => {
                   <span className="block mb-1">Preço</span>
                   <input
                     type="number"
-                    name=""
-                    id=""
+                    {...register("price")}
+                    defaultValue={product?.price}
                     min={0}
                     className=" p-2 rounded-md text-sm text-neutral-800"
-                    ref={priceRef}
-                    defaultValue={product?.price.toString()}
                   />
                 </label>
                 <label>
                   <span className="block mb-1">Categoria</span>
                   <select
-                    name=""
-                    id=""
-                    className=" p-2 rounded-md text-sm text-neutral-800"
-                    ref={categoryRef}
+                    {...register("category")}
                     defaultValue={product?.category}
+                    className=" p-2 rounded-md text-sm text-neutral-800"
                   >
                     <option value="">--Nenhum--</option>
                     <option value="burguer">Hamburguer</option>
@@ -177,11 +161,9 @@ const EditProduct = () => {
               <label>
                 <span className="block mt-4 mb-1">Descrição</span>
                 <textarea
-                  name=""
-                  id=""
-                  className="w-full p-2 rounded-md text-sm text-neutral-800"
-                  ref={descriptionRef}
+                  {...register("description")}
                   defaultValue={product?.description}
+                  className="w-full p-2 rounded-md text-sm text-neutral-800"
                 ></textarea>
               </label>
             </div>

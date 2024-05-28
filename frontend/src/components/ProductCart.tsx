@@ -6,22 +6,21 @@ import formatCurrency from "../utils/formatCurrency";
 
 //interfaces
 import { CartProps } from "../interfaces/CartProps";
+import { quantityOfProducts } from "../utils/ManipulateCartInfo";
 
 //redux
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../store";
 import {
   addQuantityOfProductsInCart,
   reducerQuantityOfProductsInCart,
   removeItemToCart,
 } from "../slice/cartSlice";
-import { useCart } from "../hooks/useCart";
-import { quantityOfProducts } from "../utils/ManipulateCartInfo";
 
 const ProductCart = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const cart = useCart();
+  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
   const handleAddQuantityOfProductsInCart = (product: CartProps) => {
     dispatch(addQuantityOfProductsInCart(product));
@@ -38,32 +37,34 @@ const ProductCart = () => {
   const handleQuantityOfProducts = quantityOfProducts(cart);
 
   return (
-    <div className="h-5/6 overflow-y-auto my-2">
-      <div className="flex flex-col gap-3">
+    <div className="overflow-y-auto flex-1">
+      <div className="flex flex-col gap-4">
         {handleQuantityOfProducts === 0 && (
           <p className="font-semibold">Vazio</p>
         )}
         {cart &&
           cart.map((productCart) => (
             <div
-              className="flex justify-between items-center"
+              className="flex justify-between items-center bg-neutral-900 rounded-md p-2"
               key={productCart._id}
             >
               <div className="flex gap-2 items-center">
-                <div className="w-[80px] h-[80px] border border-neutral-400 rounded-md ">
+                <div className="w-[70px] h-[70px] ">
                   <img
                     src={`http://localhost:3000/uploads/${productCart.imageUrl}`}
                     alt={productCart.description}
-                    className="object-contain w-full h-full p-1"
+                    className="object-contain w-full h-full rounded-md "
                   />
                 </div>
-                <div className="">
-                  <h4 className="font-semibold">{productCart.name}</h4>
-                  <strong className="font-semibold">
+                <div>
+                  <h4 className="font-normal text-sm text-neutral-300">
+                    {productCart.name}
+                  </h4>
+                  <span className="font-bold text-sm">
                     {formatCurrency(Number(productCart.subTotalPrice))}
-                  </strong>
+                  </span>
                   <span
-                    className="block mt-2 cursor-pointer text-sm text-destructive hover:text-destructive/90"
+                    className="mt-1 block cursor-pointer text-sm text-destructive hover:text-destructive/90"
                     onClick={() => handleRemoveProduct(productCart)}
                   >
                     Deletar
@@ -71,11 +72,11 @@ const ProductCart = () => {
                 </div>
               </div>
 
-              <div className="border border-neutral-400 rounded-md flex items-center justify-between gap-6 p-1 min-w-[80px]">
+              <div className="bg-neutral-800 rounded-md flex items-center justify-between gap-6 p-2 min-w-[80px]">
                 <span>{productCart.quantity}</span>
-                <div className="flex flex-col items-center gap-1">
+                <div className="flex flex-col items-center">
                   <span
-                    className="cursor-pointer bg-neutral-200"
+                    className="cursor-pointer bg-neutral-800"
                     onClick={() =>
                       handleAddQuantityOfProductsInCart(productCart)
                     }
@@ -83,7 +84,7 @@ const ProductCart = () => {
                     <IoMdArrowDropup />
                   </span>
                   <span
-                    className="cursor-pointer bg-neutral-200"
+                    className="cursor-pointer bg-neutral-800"
                     onClick={() =>
                       handleReducerQuantityOfProductsInCart(productCart)
                     }

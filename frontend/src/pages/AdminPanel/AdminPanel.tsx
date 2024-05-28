@@ -7,7 +7,7 @@ const AdminPanel = () => {
   return (
     <>
       <Navbar />
-      <main className="py-5 px-32 ">
+      <main className="py-8 px-32 ">
         <Outlet />
       </main>
     </>

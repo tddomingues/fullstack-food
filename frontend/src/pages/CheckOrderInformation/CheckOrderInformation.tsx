@@ -1,12 +1,14 @@
-import { FormEvent, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useForm, SubmitHandler } from "react-hook-form";
 
 //utils
 import formatCurrency from "../../utils/formatCurrency";
 
 //hooks
-import { useUserInfo } from "../../hooks/useUserInfo";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
+
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../../store";
 
 //router
 import { useNavigate } from "react-router-dom";
@@ -14,60 +16,55 @@ import { useNavigate } from "react-router-dom";
 //components
 import ProductCart from "../../components/ProductCart";
 import { Button } from "../../components/ui/button";
-import { createAddress, updateAddress } from "../../slice/addressSlice";
+import {
+  InitialStateProps,
+  createAddress,
+  getAddress,
+  updateAddress,
+} from "../../slice/addressSlice";
 import { AddressProps } from "../../interfaces/AddressProps";
 import Loading from "../../components/Loading";
 import { Loader2 } from "lucide-react";
-import { useAddress } from "../../hooks/useAddress";
+
 import { totalPrice } from "../../utils/ManipulateCartInfo";
-import { useCart } from "../../hooks/useCart";
+
+import { IInitialState } from "../../slice/userSlice";
+import { CartProps } from "../../interfaces/CartProps";
 
 const CheckOrderInformation = () => {
-  const addressRef = useRef<HTMLInputElement | null>(null);
-  const cityRef = useRef<HTMLSelectElement | null>(null);
-  const stateRef = useRef<HTMLSelectElement | null>(null);
-  const postalCodeRef = useRef<HTMLInputElement | null>(null);
-
   const [noAddressError, setNoAddressError] = useState<string | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
-  const { address, error, loading } = useAddress();
+  const { address, error, loading } = useSelector<
+    IRootState,
+    InitialStateProps
+  >((state) => state.address);
 
-  const cart = useCart();
+  const { token, user } = useSelector<IRootState, IInitialState>(
+    (state) => state.user,
+  );
 
-  const { token, user } = useUserInfo();
+  const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
   const handleTotalPrice = totalPrice(cart);
 
-  const handleCreateAddress = (e: FormEvent) => {
-    e.preventDefault();
+  const { register, handleSubmit, reset } = useForm<AddressProps>();
 
-    const address: AddressProps = {
-      address: addressRef.current?.value,
-      city: cityRef.current?.value,
-      state: stateRef.current?.value,
-      postalCode: postalCodeRef.current?.value,
-      userId: user?._id,
-    };
+  const onSubmitCreateAddress: SubmitHandler<AddressProps> = (data) => {
+    data.userId = user?._id;
 
-    dispatch(createAddress({ address, token: token || "" }));
+    token && dispatch(createAddress({ address: data, token }));
   };
 
-  const handleUpdateAddress = (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmitUpdateAddress: SubmitHandler<AddressProps> = (data) => {
+    data.userId = user?._id;
 
-    const address: AddressProps = {
-      address: addressRef.current?.value,
-      city: cityRef.current?.value,
-      state: stateRef.current?.value,
-      postalCode: postalCodeRef.current?.value,
-      userId: user?._id,
-    };
+    console.log(data);
 
-    dispatch(updateAddress({ address, token: token || "" }));
+    token && dispatch(updateAddress({ address: data, token }));
   };
 
   const handlePay = () => {
@@ -77,16 +74,24 @@ const CheckOrderInformation = () => {
     navigate("/");
   };
 
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
+  useEffect(() => {
+    token && dispatch(getAddress(token));
+  }, [dispatch, token]);
+
   if (loading) return <Loading />;
 
   return (
     <>
-      <main className="px-32 py-6 min-h-screen flex flex-col">
+      <main className="py-8 min-h-screen flex flex-col">
         <div className="flex justify-between gap-4 flex-1">
           <div>
-            <section className="mb-4">
-              <h2 className="font-semibold text-lg mb-1">Seus Dados</h2>
-              <form className="p-2 rounded-md border border-neutral-400 ">
+            <section className="mb-4 bg-neutral-800 p-4 rounded-md ">
+              <h2 className="font-semibold text-lg mb-4">Seus Dados</h2>
+              <form className="rounded-md ">
                 <label>
                   <span className="block mb-1 text-sm font-medium">Nome</span>
                   <input
@@ -113,12 +118,14 @@ const CheckOrderInformation = () => {
                 </label>
               </form>
             </section>
-            <section className="w-[400px]">
-              <h2 className="font-semibold text-lg mb-1">Endereço</h2>
+            <section className="w-[400px] bg-neutral-800 p-4 rounded-md ">
+              <h2 className="font-semibold text-lg mb-4">Endereço</h2>
               <form
-                className="flex flex-col gap-4 p-2 rounded-md border border-neutral-400 "
+                className="flex flex-col gap-4  rounded-md"
                 onSubmit={
-                  address === null ? handleCreateAddress : handleUpdateAddress
+                  address === null
+                    ? handleSubmit(onSubmitCreateAddress)
+                    : handleSubmit(onSubmitUpdateAddress)
                 }
               >
                 <label>
@@ -127,21 +134,19 @@ const CheckOrderInformation = () => {
                   </span>
                   <input
                     type="text"
-                    name=""
-                    id=""
+                    {...register("address")}
                     defaultValue={address?.address}
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                    placeholder="Informe seu e-mail"
-                    ref={addressRef}
+                    placeholder="Informe seu endereço"
                   />
                 </label>
                 <label>
                   <span className="block mb-1 text-sm font-medium">Cidade</span>
                   <select
-                    ref={cityRef}
+                    {...register("city")}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                   >
-                    <option value="">--Nenhum--</option>
+                    <option value="0">--Nenhum--</option>
                     <option value="maringá" selected>
                       Maringá
                     </option>
@@ -150,7 +155,7 @@ const CheckOrderInformation = () => {
                 <label>
                   <span className="block mb-1 text-sm font-medium">Estado</span>
                   <select
-                    ref={stateRef}
+                    {...register("state")}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                   >
                     <option value="">--Nenhum--</option>
@@ -163,11 +168,9 @@ const CheckOrderInformation = () => {
                   <span className="block mb-1 text-sm font-medium">CEP</span>
                   <input
                     type="text"
-                    name=""
-                    id=""
+                    {...register("postalCode")}
                     className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                    placeholder="Informe sua senha"
-                    ref={postalCodeRef}
+                    placeholder="Informe seu CEP"
                     defaultValue={address?.postalCode}
                   />
                 </label>
@@ -192,11 +195,15 @@ const CheckOrderInformation = () => {
 
                 <div className="flex justify-end mt-4">
                   {address === null ? (
-                    <Button variant="destructive" onClick={handleCreateAddress}>
+                    <Button variant="destructive" type="submit">
                       Inserir
                     </Button>
                   ) : (
-                    <Button variant="destructive" disabled={loading}>
+                    <Button
+                      variant="destructive"
+                      disabled={loading}
+                      type="submit"
+                    >
                       Atualizar
                       {loading && (
                         <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -208,22 +215,24 @@ const CheckOrderInformation = () => {
             </section>
           </div>
 
-          <section className="flex-1">
-            <h2 className="font-semibold text-lg mb-1">Seu Pedido</h2>
-            <div className="rounded-md border border-neutral-400 px-2">
-              <ProductCart />
+          <section className="flex-1 bg-neutral-800 p-4 rounded-md max-h-[679px]">
+            <div className="overflow-y-auto h-full">
+              <h2 className="font-semibold text-lg mb-4">Seu Pedido</h2>
+              <div className="rounded-md ">
+                <ProductCart />
+              </div>
             </div>
           </section>
         </div>
         <div className="mt-4">
           <div className="mb-2 flex justify-end items-center gap-4">
             <span className="font-semibold">Preço Total:</span>
-            <strong className="font-semibold">
+            <strong className="font-medium">
               {formatCurrency(handleTotalPrice)}
             </strong>
           </div>
-          <div className="flex justify-between bg-neutral-100 rounded-md p-2">
-            <Button variant="outline" onClick={() => navigate("/")}>
+          <div className="flex justify-between bg-neutral-800 rounded-md p-4">
+            <Button variant="secondary" onClick={() => navigate("/")}>
               Voltar
             </Button>
             <Button

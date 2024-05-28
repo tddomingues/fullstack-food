@@ -55,18 +55,6 @@ const getProduct = async (request: Request, response: Response) => {
   }
 };
 
-const getByCategory = async (request: Request, response: Response) => {
-  const { category } = request.params;
-
-  try {
-    const menu = await Product.find({ category });
-
-    return response.status(200).json(menu);
-  } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar  o cardápio." });
-  }
-};
-
 const deleteItem = async (request: Request, response: Response) => {
   const { _id } = request.params;
   const email = request.userInfo?.email;
@@ -135,7 +123,6 @@ const menuControllers = {
   getAllProducts,
   deleteItem,
   editProduct,
-  getByCategory,
   getProduct,
 };
 

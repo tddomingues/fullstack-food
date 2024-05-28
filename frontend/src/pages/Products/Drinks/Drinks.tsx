@@ -4,11 +4,15 @@ import Loading from "../../../components/Loading";
 import { useProduct } from "../../../hooks/useProduct";
 
 const Drinks = () => {
-  const { products, loading } = useProduct({ category: "drink" });
+  const { products, loading } = useProduct();
 
   if (loading) return <Loading />;
 
-  return <ProductCard products={products} />;
+  const productsBurguer = products.filter((product) => {
+    return product.category === "drink";
+  });
+
+  return <ProductCard products={productsBurguer} />;
 };
 
 export default Drinks;

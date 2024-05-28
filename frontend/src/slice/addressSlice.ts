@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addressService } from "../service/addressService";
 import { AddressProps } from "../interfaces/AddressProps";
 
-interface InitialStateProps {
+export interface InitialStateProps {
   address: AddressProps | null;
   error: string[] | null;
   loading: boolean;

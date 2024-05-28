@@ -12,9 +12,6 @@ import {
 import Cart from "./Cart";
 import { Button } from "./ui/button";
 
-//hooks
-import { useUserInfo } from "../hooks/useUserInfo";
-
 //styles
 import { LuLogOut } from "react-icons/lu";
 
@@ -22,78 +19,80 @@ import { LuLogOut } from "react-icons/lu";
 import Perfil from "../assets/perfil.jpg";
 
 //redux
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../store";
 import { logout } from "../slice/userSlice";
+
+//interfaces
+import { UserProps } from "../interfaces/UserProps";
+
+type User = Omit<UserProps, "_id" | "password">;
 
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const { token, user } = useUserInfo();
-
   const dispatch = useDispatch<AppDispatch>();
+
+  const user = useSelector<IRootState, User | undefined>(
+    (state) => state.user.user,
+  );
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
   return (
-    <header className="flex justify-between items-center py-5 px-32 bg-neutral-50">
-      <NavLink to="/">Logo</NavLink>
-
-      <div className="flex items-center gap-4">
-        <ul className="flex items-center gap-4">
-          {!token && (
-            <>
+    <header>
+      <div className="flex justify-between items-center py-8">
+        <NavLink to="/">Logo</NavLink>
+        <div className="flex items-center gap-4 ">
+          <ul className="flex items-center  gap-4">
+            {!user && (
               <li>
                 <Button variant="ghost" onClick={() => navigate("/login")}>
                   Entrar
                 </Button>
               </li>
-              <li>
-                <Button variant="destructive">Cadastrar</Button>
+            )}
+            {user?.role !== "admin" && (
+              <li className="relative cursor-pointer mt-2">
+                <Cart />
               </li>
-            </>
-          )}
-          {user?.role !== "admin" && (
-            <li className="relative cursor-pointer ">
-              <Cart />
-            </li>
-          )}
-        </ul>
-        {token && (
-          <Menubar>
-            <MenubarMenu>
-              <MenubarTrigger className="cursor-pointer">
-                <img
-                  src={Perfil}
-                  alt="Imagem de perfil"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-sm font-normal ml-2">{`Olá, ${user?.name}!`}</span>
-              </MenubarTrigger>
-              <MenubarContent>
-                {user?.role === "client" && (
-                  <MenubarItem>
-                    <NavLink
-                      to="/profile/order"
-                      className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
-                    >
-                      Pedidos
-                    </NavLink>
-                  </MenubarItem>
-                )}
+            )}
+          </ul>
+          {user && (
+            <Menubar>
+              <MenubarMenu>
+                <MenubarTrigger className="cursor-pointer">
+                  <img
+                    src={Perfil}
+                    alt="Imagem de perfil"
+                    className="w-10 h-10 rounded-full"
+                  />
+                </MenubarTrigger>
+                <MenubarContent>
+                  {user?.role === "client" && (
+                    <MenubarItem>
+                      <NavLink
+                        to="/"
+                        className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
+                      >
+                        Pedidos
+                      </NavLink>
+                    </MenubarItem>
+                  )}
 
-                <MenubarItem onClick={handleLogout}>
-                  <div className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer flex gap-2 items-center">
-                    <span>Sair</span>
-                    <LuLogOut />
-                  </div>
-                </MenubarItem>
-              </MenubarContent>
-            </MenubarMenu>
-          </Menubar>
-        )}
+                  <MenubarItem onClick={handleLogout}>
+                    <div className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer flex gap-2 items-center">
+                      <span>Sair</span>
+                      <LuLogOut />
+                    </div>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
+          )}
+        </div>
       </div>
     </header>
   );

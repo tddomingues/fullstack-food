@@ -9,11 +9,11 @@ import { productService } from "../service/productService";
 //interfaces
 import { ProductProps } from "../interfaces/ProductProps";
 
-interface IinitialState {
+export interface IinitialState {
   success: string | null;
   loading: boolean;
   error: string[] | null;
-  product: ProductProps | undefined;
+  product: ProductProps | null;
   products: ProductProps[];
 }
 
@@ -21,7 +21,7 @@ const initialState: IinitialState = {
   success: null,
   loading: false,
   error: null,
-  product: undefined,
+  product: null,
   products: [],
 };
 
@@ -29,17 +29,6 @@ export const getProducts = createAsyncThunk(
   "product/getProducts",
   async (_, thunkAPI) => {
     const data = await productService.getAllProducts();
-
-    if (data.error) return thunkAPI.rejectWithValue(data.error);
-
-    return data;
-  },
-);
-
-export const getProductsByCategory = createAsyncThunk(
-  "product/getProductsByCategory",
-  async (category: string, thunkAPI) => {
-    const data = await productService.getProductsByCategory(category);
 
     if (data.error) return thunkAPI.rejectWithValue(data.error);
 
@@ -96,12 +85,10 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
-  async (_id: string, thunkAPI) => {
-    const token = Cookies.get("token") || "";
-
+  async ({ _id, token }: { _id: string; token: string }, thunkAPI) => {
     const data = await productService.deleteProduct(_id, token);
 
-    if (data.error) return thunkAPI.rejectWithValue(data.error);
+    //if (data.error) return thunkAPI.rejectWithValue(data.error);
 
     return data;
   },
@@ -139,13 +126,14 @@ const productSlice = createSlice({
       .addCase(
         getProduct.fulfilled,
         (state, action: PayloadAction<ProductProps>) => {
+          console.log(action);
           state.loading = false;
           state.product = action.payload;
         },
       )
       .addCase(getProduct.rejected, (state) => {
         state.loading = false;
-        state.product = undefined;
+        state.product = null;
       })
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
@@ -172,32 +160,22 @@ const productSlice = createSlice({
         state.success = null;
         state.loading = false;
       })
-      .addCase(getProductsByCategory.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(
-        getProductsByCategory.fulfilled,
-        (state, action: PayloadAction<ProductProps[]>) => {
-          state.loading = false;
-          state.products = action.payload;
-        },
-      )
-      .addCase(getProductsByCategory.rejected, (state) => {
-        state.loading = false;
-        state.products = [];
-      })
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteProduct.fulfilled, (state) => {
+      .addCase(deleteProduct.fulfilled, (state, action) => {
         state.success = "Deletado com sucesso.";
         state.loading = false;
+        state.products = state.products.filter((product) => {
+          return product._id !== action.meta.arg._id;
+        });
       })
       .addCase(deleteProduct.rejected, (state, action) => {
+        console.log(action);
         state.success = null;
         state.loading = false;
-        state.error = action.payload as string[];
+        //state.error = action.payload as string[];
       });
   },
 });

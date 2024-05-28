@@ -4,7 +4,7 @@ import Loading from "../../../components/Loading";
 import { useProduct } from "../../../hooks/useProduct";
 
 const AllProducts = () => {
-  const { products, loading } = useProduct({ category: undefined });
+  const { products, loading } = useProduct();
 
   if (loading) return <Loading />;
 

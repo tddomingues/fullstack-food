@@ -56,11 +56,23 @@ const login = async (request: Request, response: Response) => {
     );
 
     return response
-      .cookie("token", token, {
+      .cookie("token", JSON.stringify(token), {
         expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
       })
+      .cookie(
+        "user",
+        JSON.stringify({
+          name: user.name,
+          role: user.role,
+          email: user.email,
+          _id: user._id,
+        }),
+        {
+          expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
+        },
+      )
       .status(200)
-      .json({ message: "Autorizado com sucesso.", token });
+      .json({ message: "Autorizado com sucesso." });
   } catch (error) {
     return response.status(400).json({ error: ["Erro ao criar o usuário."] });
   }
@@ -70,7 +82,7 @@ const logout = async (request: Request, response: Response) => {
   try {
     return response
       .clearCookie("token")
-      .clearCookie("userEmail")
+      .clearCookie("user")
       .status(200)
       .json({ message: "Logout com sucesso." });
   } catch (error) {

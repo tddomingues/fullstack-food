@@ -5,16 +5,17 @@ import { useNavigate } from "react-router-dom";
 import formatCurrency from "../utils/formatCurrency";
 
 //hooks
-import { useUserInfo } from "../hooks/useUserInfo";
 
 //redux
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, IRootState } from "../store";
 import { addItemToCart } from "../slice/cartSlice";
 import { deleteProduct } from "../slice/productSlice";
 
 //interfaces
 import { ProductProps } from "../interfaces/ProductProps";
+import { UserProps } from "../interfaces/UserProps";
+import { IInitialState } from "../slice/userSlice";
 
 //componets
 import { Button } from "./ui/button";
@@ -29,26 +30,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+
+//hooks
 import { useToast } from "./ui/use-toast";
+
+//utils
+import { firstCapitalLetter } from "../utils/firstCapitalLetter";
 
 //qualquer passagem por props deve ser um objeto
 interface ProductsCardProps {
   products: ProductProps[];
 }
 
+//type User = Omit<UserProps, "_id" | "password">;
+
 const ProductCard = ({ products }: ProductsCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { user } = useUserInfo();
+  const navigate = useNavigate();
 
   const { toast } = useToast();
 
-  const navigate = useNavigate();
+  const { token, user } = useSelector<IRootState, IInitialState>(
+    (state) => state.user,
+  );
 
   const handleDeleteProduct = async (_id: string) => {
-    dispatch(deleteProduct(_id));
-
-    location.reload();
+    token && dispatch(deleteProduct({ _id, token }));
   };
 
   const handleAddItemToCart = (product: ProductProps) => {
@@ -56,7 +64,7 @@ const ProductCard = ({ products }: ProductsCardProps) => {
 
     toast({
       title: "Que Delícia!!! 🤤",
-      description: "Produto adicionado ao carrinho.",
+      description: `${firstCapitalLetter(product.category)} adicionado ao carrinho.`,
     });
   };
 
@@ -66,25 +74,25 @@ const ProductCard = ({ products }: ProductsCardProps) => {
         products.map((product) => (
           <div
             key={product._id}
-            className="flex flex-col max-w-[300px] relative"
+            className="flex flex-col bg-neutral-800 rounded-md max-w-[300px]"
           >
-            <div className="border border-neutral-400 rounded-md p-4 transition ease-in-out delay-100  hover:bg-neutral-100">
+            <div className="transition ease-in-out delay-100 relative">
               <img
                 src={`http://localhost:3000/uploads/${product.imageUrl}`}
                 alt={product.description}
-                className=" object-contain h-[200px] w-[200px] m-auto"
+                className="rounded-md "
               />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold mt-1">{product.name}</h3>
-              <div className="my-1">
-                <span className="font-semibold">
+            <div className="flex-1 p-4">
+              <h3 className="font-normal text-neutral-300">{product.name}</h3>
+              <div className="mt-1">
+                <span className="font-medium">
                   {formatCurrency(Number(product.price))}
                 </span>
               </div>
             </div>
-            {user && user.role === "admin" && (
-              <div className="flex justify-between gap-4">
+            {user?.role === "admin" && (
+              <div className="flex justify-between gap-4 px-4 pb-4">
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-600/90"
                   onClick={() =>
@@ -101,15 +109,17 @@ const ProductCard = ({ products }: ProductsCardProps) => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
+                      <AlertDialogTitle className="text-neutral-900">
                         Deseja excluir o produto?
                       </AlertDialogTitle>
-                      <AlertDialogDescription>
+                      <AlertDialogDescription className="text-neutral-900">
                         O Produto será excluido permanentemente.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogCancel className="text-neutral-900">
+                        Cancelar
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDeleteProduct(product._id)}
                         className="bg-destructive hover:bg-destructive/90"
@@ -121,10 +131,11 @@ const ProductCard = ({ products }: ProductsCardProps) => {
                 </AlertDialog>
               </div>
             )}
+
             {user?.role !== "admin" && (
               <Button
-                className="w-full"
                 variant="destructive"
+                className="mx-4 mb-4"
                 onClick={() => handleAddItemToCart(product)}
               >
                 Adicionar

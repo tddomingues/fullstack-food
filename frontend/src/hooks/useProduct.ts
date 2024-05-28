@@ -1,18 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../store";
 import { useEffect } from "react";
-import {
-  getProducts,
-  getProductsByCategory,
-  reset,
-} from "../slice/productSlice";
+import { getProducts } from "../slice/productSlice";
 import { ProductProps } from "../interfaces/ProductProps";
 
-export const useProduct = ({ category }: { category?: string }) => {
+export const useProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const products = useSelector<IRootState, ProductProps[]>(
     (state) => state.product.products,
+  );
+
+  const product = useSelector<IRootState, ProductProps | undefined>(
+    (state) => state.product.product,
   );
 
   const success = useSelector<IRootState, string | null>(
@@ -28,14 +28,8 @@ export const useProduct = ({ category }: { category?: string }) => {
   );
 
   useEffect(() => {
-    dispatch(reset());
+    dispatch(getProducts());
+  }, [dispatch]);
 
-    if (category !== undefined) {
-      dispatch(getProductsByCategory(category || ""));
-    } else {
-      dispatch(getProducts());
-    }
-  }, [dispatch, category]);
-
-  return { success, error, loading, products };
+  return { success, error, loading, products, product };
 };

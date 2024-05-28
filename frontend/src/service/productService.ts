@@ -13,15 +13,6 @@ const getAllProducts = async () => {
   return res;
 };
 
-const getProductsByCategory = async (category: string) => {
-  const res = await api
-    .get(`/category/${category}`)
-    .then((res) => res.data)
-    .catch((err) => err.response.data);
-
-  return res;
-};
-
 const getProduct = async (id: string, token: string) => {
   const res = await api
     .get(`/getProduct/${id}`, {
@@ -77,7 +68,6 @@ const deleteProduct = async (_id: string, token: string) => {
 export const productService = {
   getAllProducts,
   createProduct,
-  getProductsByCategory,
   deleteProduct,
   editProduct,
   getProduct,

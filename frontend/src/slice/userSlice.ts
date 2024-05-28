@@ -9,19 +9,23 @@ import { UserProps } from "../interfaces/UserProps";
 //servuices
 import { userService } from "../service/userService";
 
-interface IInitialState {
-  user: UserProps | null;
+export interface IInitialState {
+  user: UserProps | undefined;
   token: string | undefined;
   error: string[] | null;
   loading: boolean;
   success: boolean;
 }
 
-const token = Cookies.get("token");
-
 const initialState: IInitialState = {
-  user: null,
-  token: token === undefined ? undefined : token,
+  user:
+    Cookies.get("user") === undefined
+      ? undefined
+      : JSON.parse(Cookies.get("user") || ""),
+  token:
+    Cookies.get("token") === undefined
+      ? undefined
+      : JSON.parse(Cookies.get("token") || ""),
   error: null,
   loading: false,
   success: false,
@@ -59,6 +63,7 @@ export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
   if (data.error) return thunkAPI.rejectWithValue(data.error);
 
   Cookies.remove("token");
+  Cookies.remove("user");
 
   return data;
 });
@@ -77,16 +82,26 @@ export const getUser = createAsyncThunk(
 const userSlice = createSlice({
   name: "slice",
   initialState,
-  reducers: {},
+  reducers: {
+    reset: (state) => {
+      state.error = null;
+      state.loading = false;
+      state.success = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.token = Cookies.get("token");
         state.loading = true;
+        state.user =
+          Cookies.get("user") === undefined
+            ? undefined
+            : JSON.parse(Cookies.get("user") || "");
       })
       .addCase(login.rejected, (state, action) => {
         state.token = undefined;
@@ -99,7 +114,10 @@ const userSlice = createSlice({
         state.success = false;
       })
       .addCase(register.fulfilled, (state) => {
-        state.token = Cookies.get("token");
+        state.token =
+          Cookies.get("token") === undefined
+            ? undefined
+            : JSON.parse(Cookies.get("token") || "");
         state.loading = true;
         state.success = true;
       })
@@ -133,4 +151,5 @@ const userSlice = createSlice({
   },
 });
 
+export const { reset } = userSlice.actions;
 export default userSlice.reducer;

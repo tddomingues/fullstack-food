@@ -1,90 +1,115 @@
 //router
-import { Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 //components
 import { Button } from "../../components/ui/button";
 import Navbar from "../../components/Navbar";
 
-//hooks
-import { useUserInfo } from "../../hooks/useUserInfo";
+//styles
+import IconBurguer from "../../assets/icon-burguer.png";
+import IconCombo from "../../assets/icon-combo.png";
+import IconDrink from "../../assets/icon-drink.png";
+
+//redux
+import { IRootState } from "../../store";
+import { useSelector } from "react-redux";
+
+//interfaces
+import { UserProps } from "../../interfaces/UserProps";
+
+type User = Omit<UserProps, "_id" | "password">;
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const { user } = useUserInfo();
+  const user = useSelector<IRootState, User | undefined>(
+    (state) => state.user.user,
+  );
 
   return (
     <>
       <Navbar />
 
-      <main className="py-6 px-32 ">
-        <section>
-          {user && user.role === "admin" && (
-            <div className="flex justify-between items-center">
-              <h1 className="font-semibold text-xl">
-                Itens vendidos pela loja
-              </h1>
+      <main className="py-0">
+        <div>
+          {user?.role === "admin" && (
+            <section className="flex justify-end items-center mb-4">
               <Button
                 onClick={() => navigate("admin-painel/create-product")}
-                variant="outline"
+                variant="secondary"
               >
                 Criar Produto
               </Button>
-            </div>
+            </section>
           )}
 
-          {user && user.role === "client" && (
-            <h1 className="font-semibold text-xl">Faça o seu pedido</h1>
-          )}
+          <div className="flex gap-4">
+            <article className="w-[240px]">
+              <h2 className="bg-neutral-800 mb-4 rounded-md p-4 text-2xl font-medium">
+                Categorias
+              </h2>
+              <div>
+                <ul className="flex justify-center flex-col w-full">
+                  <li>
+                    <NavLink
+                      to="/"
+                      className="flex items-center justify-between gap-2 rounded-t-md p-4 text-center cursor-pointer transition ease-in-out delay-100 bg-neutral-800 hover:bg-neutral-700"
+                    >
+                      <span className="font-normal text-base">Todos</span>
 
-          <div className="flex justify-between gap-4 mt-4">
-            <div>
-              <div className="rounded-md border-[1px] border-neutral-400 bg-neutral-100">
-                <input
-                  type="text"
-                  name=""
-                  id=""
-                  placeholder="Pesquisar"
-                  className="p-2 text-neutral-800 border"
-                />
-              </div>
-              <div className="mt-12 bg-neutral-100 rounded-md border-[1px] border-neutral-400">
-                <h3 className="mb-6 text-xl font-semibold p-2">Categorias</h3>
-                <ul className="flex flex-col">
-                  <li
-                    className="cursor-pointer p-2 w-full transition ease-in-out delay-100 hover:bg-neutral-200"
-                    onClick={() => navigate("/")}
-                  >
-                    <span>Todos</span>
+                      <img
+                        src={IconCombo}
+                        alt="Icone de um hamburguer"
+                        className="h-[50px]"
+                      />
+                    </NavLink>
                   </li>
-                  <li
-                    className="cursor-pointer p-2 w-full transition ease-in-out delay-100 hover:bg-neutral-200"
-                    onClick={() => navigate("category/burguer")}
-                  >
-                    <span>Hamburgueres</span>
+                  <li>
+                    <NavLink
+                      to="/category/burguer"
+                      className="flex items-center justify-between gap-2 p-4 text-center cursor-pointer transition ease-in-out delay-100 bg-neutral-800  hover:bg-neutral-700"
+                    >
+                      <span className="font-normal text-base">
+                        Hambúrgueres
+                      </span>
+
+                      <img
+                        src={IconBurguer}
+                        alt="Icone de um hamburguer"
+                        className="h-[50px]"
+                      />
+                    </NavLink>
                   </li>
-                  <li
-                    className="cursor-pointer p-2 w-full transition ease-in-out delay-100 hover:bg-neutral-200"
-                    onClick={() => navigate("category/pizza")}
-                  >
-                    <span>Pizzas</span>
-                  </li>
-                  <li
-                    className="cursor-pointer p-2 w-full transition ease-in-out delay-100 rounded-b-md hover:bg-neutral-200"
-                    onClick={() => navigate("category/drink")}
-                  >
-                    <span>Bebidas</span>
+                  <li>
+                    <NavLink
+                      to="/category/drink"
+                      className="flex items-center justify-between gap-2 rounded-b-md p-4 text-center cursor-pointer transition ease-in-out delay-100 bg-neutral-800  hover:bg-neutral-700"
+                    >
+                      <span className="font-normal text-base">Bebidas</span>
+
+                      <img
+                        src={IconDrink}
+                        alt="Icone de um hamburguer"
+                        className="h-[50px]"
+                      />
+                    </NavLink>
                   </li>
                 </ul>
               </div>
-            </div>
-            <div className="flex-1">
-              <div className="rounded-md  ">
-                <Outlet />
+            </article>
+
+            <section className="flex-1">
+              <h2 className="bg-neutral-800 mb-4 rounded-md p-4 text-2xl font-medium">
+                Produtos
+              </h2>
+              <div className="flex-1">
+                <div className="rounded-md ">
+                  <Outlet />
+                </div>
               </div>
-            </div>
+            </section>
           </div>
-        </section>
+        </div>
       </main>
     </>
   );
