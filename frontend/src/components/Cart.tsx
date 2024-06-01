@@ -44,8 +44,8 @@ const Cart = () => {
 
   const handleTotalPrice = totalPrice(cart);
 
-  const handleCheckOrderInformation = () => {
-    user ? navigate("/check-order-information") : navigate("/login");
+  const handleCheckOrder = () => {
+    user ? navigate("/check-order") : navigate("/login");
   };
 
   return (
@@ -80,7 +80,7 @@ const Cart = () => {
               type="submit"
               variant="destructive"
               disabled={handleQuantityOfProducts === 0}
-              onClick={handleCheckOrderInformation}
+              onClick={handleCheckOrder}
             >
               Finalizar Compra
             </Button>

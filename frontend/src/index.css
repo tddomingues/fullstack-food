@@ -16,7 +16,7 @@
       --primary: 0 0% 9%;
       --primary-foreground: 0 0% 98%;
 
-      --secondary: 0 0% 96.1%;
+      --secondary: 0 0% 83%;
       --secondary-foreground: 0 0% 9%;
 
       --muted: 0 0% 96.1%;
@@ -74,7 +74,7 @@
       @apply bg-background text-foreground bg-neutral-900 text-neutral-50;
     }
     input, select, textarea {
-      @apply border border-neutral-400 bg-neutral-50 rounded-md
+      @apply border border-neutral-400 rounded-md bg-neutral-300 border-none
     }
     
   }

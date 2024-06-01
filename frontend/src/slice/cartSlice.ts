@@ -20,6 +20,11 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    cleanCart: (state) => {
+      state.cart = [];
+
+      localStorage.removeItem("cart");
+    },
     addQuantityOfProductsInCart: (state, actions: PayloadAction<CartProps>) => {
       const newProduct = state.cart.map((productCart) => {
         const quantity = actions.payload.quantity + 1;
@@ -124,6 +129,7 @@ export const {
   addQuantityOfProductsInCart,
   reducerQuantityOfProductsInCart,
   removeItemToCart,
+  cleanCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

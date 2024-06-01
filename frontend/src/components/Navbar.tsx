@@ -26,7 +26,7 @@ import { logout } from "../slice/userSlice";
 //interfaces
 import { UserProps } from "../interfaces/UserProps";
 
-type User = Omit<UserProps, "_id" | "password">;
+type User = Omit<UserProps, "password">;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -36,6 +36,8 @@ const Navbar = () => {
   const user = useSelector<IRootState, User | undefined>(
     (state) => state.user.user,
   );
+
+  console.log(user);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -74,7 +76,7 @@ const Navbar = () => {
                   {user?.role === "client" && (
                     <MenubarItem>
                       <NavLink
-                        to="/"
+                        to={`/orders/${user._id}`}
                         className="transition ease-in-out delay-100 hover:text-destructive cursor-pointer"
                       >
                         Pedidos

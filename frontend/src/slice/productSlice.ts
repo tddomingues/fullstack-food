@@ -1,5 +1,3 @@
-import Cookies from "js-cookie";
-
 //redux
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 

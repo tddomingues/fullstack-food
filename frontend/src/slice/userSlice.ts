@@ -95,7 +95,7 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state) => {
         state.token = Cookies.get("token");
         state.loading = true;
         state.user =
@@ -127,13 +127,13 @@ const userSlice = createSlice({
         state.error = action.payload as string[];
         state.success = false;
       })
-      .addCase(logout.rejected, (state, action) => {
+      .addCase(logout.rejected, (state) => {
         state.token = undefined;
-        state.user = null;
+        state.user = undefined;
       })
-      .addCase(logout.fulfilled, (state, action) => {
+      .addCase(logout.fulfilled, (state) => {
         state.token = undefined;
-        state.user = null;
+        state.user = undefined;
       })
       .addCase(getUser.pending, (state) => {
         state.loading = true;
