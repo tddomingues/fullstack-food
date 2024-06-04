@@ -73,8 +73,11 @@
     body {
       @apply bg-background text-foreground bg-neutral-900 text-neutral-50;
     }
+    #root {
+      @apply max-w-[1272px] m-auto px-8 flex flex-col min-h-svh
+    }
     input, select, textarea {
-      @apply border border-neutral-400 rounded-md bg-neutral-300 border-none
+      @apply border border-neutral-400 rounded-md bg-neutral-50 border-none
     }
     
   }

@@ -7,7 +7,7 @@ import { productService } from "../service/productService";
 //interfaces
 import { ProductProps } from "../interfaces/ProductProps";
 
-export interface IinitialState {
+export interface IInitialState {
   success: string | null;
   loading: boolean;
   error: string[] | null;
@@ -15,7 +15,7 @@ export interface IinitialState {
   products: ProductProps[];
 }
 
-const initialState: IinitialState = {
+const initialState: IInitialState = {
   success: null,
   loading: false,
   error: null,
@@ -86,7 +86,7 @@ export const deleteProduct = createAsyncThunk(
   async ({ _id, token }: { _id: string; token: string }, thunkAPI) => {
     const data = await productService.deleteProduct(_id, token);
 
-    //if (data.error) return thunkAPI.rejectWithValue(data.error);
+    if (data.error) return thunkAPI.rejectWithValue(data.error);
 
     return data;
   },
@@ -124,7 +124,6 @@ const productSlice = createSlice({
       .addCase(
         getProduct.fulfilled,
         (state, action: PayloadAction<ProductProps>) => {
-          console.log(action);
           state.loading = false;
           state.product = action.payload;
         },
@@ -154,9 +153,10 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
-      .addCase(editProduct.rejected, (state) => {
+      .addCase(editProduct.rejected, (state, action) => {
         state.success = null;
         state.loading = false;
+        state.error = action.payload as string[];
       })
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
@@ -173,7 +173,7 @@ const productSlice = createSlice({
         console.log(action);
         state.success = null;
         state.loading = false;
-        //state.error = action.payload as string[];
+        state.error = action.payload as string[];
       });
   },
 });

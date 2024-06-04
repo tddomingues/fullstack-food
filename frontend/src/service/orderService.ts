@@ -14,26 +14,22 @@ const payment = async ({
   userId: string;
   cart: CartProps[];
 }) => {
-  console.log({ cart, userId });
-
   const res = api
     .post("/create-checkout-session", { cart, userId })
     .then((res) => {
       if (res.data.url) window.open(res.data.url, "_blank", "noreferrer");
       return res.data;
     })
-    .catch((err) => console.log(err));
+    .catch((err) => err.response.data);
 
-  console.log(res);
-
-  //return res;
+  return res;
 };
 
 const getOrdersByUser = async (userId: string) => {
   const res = api
     .get(`/getOrdersByUser/${userId}`)
     .then((res) => res.data)
-    .catch((err) => console.log(err));
+    .catch((err) => err.response.data);
 
   return res;
 };

@@ -62,7 +62,7 @@ const deleteProduct = async (_id: string, token: string) => {
     .then((res) => res.data)
     .catch((err) => err.response.data);
 
-  return res.data;
+  return res;
 };
 
 export const productService = {

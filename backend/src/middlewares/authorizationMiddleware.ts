@@ -16,7 +16,7 @@ const validateToken = (
     const [, token] = request.headers.authorization?.split(" ") || [" ", " "];
 
     if (!token)
-      return response.status(400).json({ error: "Token não encontrado." });
+      return response.status(400).json({ error: ["Token não encontrado."] });
 
     const { email, role, id } = jwt.verify(token, "secredokey") as JwtPayload;
 
@@ -24,7 +24,9 @@ const validateToken = (
 
     return next();
   } catch (error) {
-    return response.status(400).json({ error: "Erro na validação do token." });
+    return response
+      .status(400)
+      .json({ error: ["Erro na validação do token."] });
   }
 };
 

@@ -1,11 +1,10 @@
 //components
 import ProductCard from "../../../components/ProductCard";
 import Loading from "../../../components/Loading";
-import { useProduct } from "../../../hooks/useProduct";
-import { useState } from "react";
+import { useProducts } from "../../../hooks/useProducts";
 
 const Burguers = () => {
-  const { products, loading } = useProduct();
+  const { products, loading } = useProducts();
 
   const productsBurguer = products.filter((product) => {
     return product.category === "burguer";

@@ -22,10 +22,9 @@ const initialState: IInitialState = {
     Cookies.get("user") === undefined
       ? undefined
       : JSON.parse(Cookies.get("user") || ""),
-  token:
-    Cookies.get("token") === undefined
-      ? undefined
-      : JSON.parse(Cookies.get("token") || ""),
+  token: Cookies.get("token")
+    ? JSON.parse(Cookies.get("token") || "")
+    : undefined,
   error: null,
   loading: false,
   success: false,
@@ -93,7 +92,6 @@ const userSlice = createSlice({
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(login.fulfilled, (state) => {
         state.token = Cookies.get("token");
@@ -102,34 +100,30 @@ const userSlice = createSlice({
           Cookies.get("user") === undefined
             ? undefined
             : JSON.parse(Cookies.get("user") || "");
+        state.token =
+          Cookies.get("token") === undefined
+            ? undefined
+            : JSON.parse(Cookies.get("token") || "");
       })
       .addCase(login.rejected, (state, action) => {
         state.token = undefined;
+        state.user = undefined;
         state.loading = false;
         state.error = action.payload as string[];
       })
       .addCase(register.pending, (state) => {
         state.loading = true;
-        state.error = null;
-        state.success = false;
       })
       .addCase(register.fulfilled, (state) => {
-        state.token =
-          Cookies.get("token") === undefined
-            ? undefined
-            : JSON.parse(Cookies.get("token") || "");
         state.loading = true;
         state.success = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.token = undefined;
+        state.user = undefined;
         state.loading = false;
         state.error = action.payload as string[];
         state.success = false;
-      })
-      .addCase(logout.rejected, (state) => {
-        state.token = undefined;
-        state.user = undefined;
       })
       .addCase(logout.fulfilled, (state) => {
         state.token = undefined;
@@ -142,12 +136,6 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
       });
-    // .addCase(
-    //   logout.rejected,
-    //   (state, action: PayloadAction<{ error: string }>) => {
-    //     state.error = action.payload.error;
-    //   },
-    // );
   },
 });
 

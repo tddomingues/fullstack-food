@@ -26,18 +26,14 @@ import { logout } from "../slice/userSlice";
 //interfaces
 import { UserProps } from "../interfaces/UserProps";
 
-type User = Omit<UserProps, "password">;
-
 const Navbar = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const user = useSelector<IRootState, User | undefined>(
+  const user = useSelector<IRootState, UserProps | undefined>(
     (state) => state.user.user,
   );
-
-  console.log(user);
 
   const handleLogout = () => {
     dispatch(logout());

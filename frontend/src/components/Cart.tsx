@@ -21,31 +21,24 @@ import { quantityOfProducts, totalPrice } from "../utils/ManipulateCartInfo";
 //hooks
 
 //interfaces
-import { UserProps } from "../interfaces/UserProps";
+import { CartProps } from "../interfaces/CartProps";
 
 //router
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IRootState } from "../store";
-import { CartProps } from "../interfaces/CartProps";
-
-type User = Omit<UserProps, "_id" | "password">;
 
 const Cart = () => {
   const navigate = useNavigate();
 
   const cart = useSelector<IRootState, CartProps[]>((state) => state.cart.cart);
 
-  const user = useSelector<IRootState, User | undefined>(
-    (state) => state.user.user,
-  );
-
   const handleQuantityOfProducts = quantityOfProducts(cart);
 
   const handleTotalPrice = totalPrice(cart);
 
   const handleCheckOrder = () => {
-    user ? navigate("/check-order") : navigate("/login");
+    navigate("/check-order");
   };
 
   return (

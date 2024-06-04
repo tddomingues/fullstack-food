@@ -1,11 +1,14 @@
 import Stripe from "stripe";
+
 import dotenv from "dotenv";
+dotenv.config();
+
 import { Request, Response } from "express";
 import Order from "../model/order";
+
+//interfaces
 import { OrderProps } from "../interface/OrderProps";
 import { CartProps } from "../interface/CartProps";
-
-dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_API_ACCESS_TOKEN || "");
 
@@ -18,6 +21,11 @@ const payment = async (request: Request, response: Response) => {
   const { cart, userId }: PaymentProps = request.body;
 
   try {
+    if (!userId || !cart)
+      return response
+        .status(400)
+        .json({ error: ["Id do usuário e/ou produtos não enviado."] });
+
     const customer = await stripe.customers.create({
       metadata: {
         userId,
@@ -61,7 +69,13 @@ const payment = async (request: Request, response: Response) => {
 
 const createOrder = async ({ address, userId, cart, status }: OrderProps) => {
   try {
-    console.log(address, userId, cart, status);
+    console.log(
+      "address, userId, cart, status ",
+      address,
+      userId,
+      cart,
+      status,
+    );
 
     const order = await Order.create({ address, userId, cart, status });
 
@@ -77,11 +91,13 @@ const getOrdersByUser = async (request: Request, response: Response) => {
     const orders = await Order.find({ userId: id });
 
     if (!orders)
-      return response.status(400).json({ error: "Pedidos não encontrados." });
+      return response.status(400).json({ error: ["Pedidos não encontrados."] });
 
     return response.status(200).json(orders);
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao procurar os pedidos." });
+    return response
+      .status(400)
+      .json({ error: ["Erro ao procurar os pedidos."] });
   }
 };
 

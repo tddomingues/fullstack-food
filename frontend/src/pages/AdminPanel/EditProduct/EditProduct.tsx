@@ -1,5 +1,5 @@
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 //router
@@ -17,7 +17,7 @@ import { ProductProps } from "../../../interfaces/ProductProps";
 import { AppDispatch, IRootState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  IinitialState,
+  IInitialState,
   editProduct,
   getProduct,
   reset as resetMessages,
@@ -37,19 +37,22 @@ const EditProduct = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
+  const token = JSON.parse(Cookies.get("token") || "");
 
   const navigate = useNavigate();
 
   const { error, product, success, loading } = useSelector<
     IRootState,
-    IinitialState
+    IInitialState
   >((state) => state.product);
 
-  const { register, handleSubmit, watch, reset } =
-    useForm<CreateProductProps>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CreateProductProps>();
 
   const watchFile = watch("file");
 
@@ -123,36 +126,40 @@ const EditProduct = () => {
               </label>
             </div>
             <div className="w-full">
-              <div className="flex gap-2">
-                <label className="flex-1">
-                  <span className="block mb-1">Nome</span>
-                  <input
-                    type="text"
-                    {...register("name")}
-                    className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                    defaultValue={product?.name}
-                  />
-                </label>
+              <label>
+                <span className="block mb-1">Nome</span>
+                <input
+                  type="text"
+                  {...register("name", { required: true })}
+                  className="p-2 rounded-md text-sm text-neutral-800 w-full"
+                  defaultValue={product?.name}
+                />
+              </label>
+              <div className="flex gap-2 mt-4">
                 <label>
                   <span className="block mb-1">Preço</span>
                   <input
                     type="number"
-                    {...register("price")}
+                    {...register("price", { required: true })}
                     defaultValue={product?.price}
-                    min={0}
-                    className=" p-2 rounded-md text-sm text-neutral-800"
+                    step=".01"
+                    min="0"
+                    className=" p-2 rounded-md text-sm text-neutral-800 w-[60px]"
                   />
                 </label>
                 <label>
                   <span className="block mb-1">Categoria</span>
                   <select
-                    {...register("category")}
+                    {...register("category", {
+                      validate: (value) => {
+                        return value !== "0";
+                      },
+                    })}
                     defaultValue={product?.category}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                   >
-                    <option value="">--Nenhum--</option>
+                    <option value="0">--Nenhum--</option>
                     <option value="burguer">Hamburguer</option>
-                    <option value="pizza">Pizza</option>
                     <option value="drink">Bebida</option>
                   </select>
                 </label>
@@ -161,7 +168,7 @@ const EditProduct = () => {
               <label>
                 <span className="block mt-4 mb-1">Descrição</span>
                 <textarea
-                  {...register("description")}
+                  {...register("description", { required: true })}
                   defaultValue={product?.description}
                   className="w-full p-2 rounded-md text-sm text-neutral-800"
                 ></textarea>
@@ -182,6 +189,35 @@ const EditProduct = () => {
                   {err}
                 </p>
               ))}
+            </div>
+          )}
+          {Object.keys(errors).length > 0 && (
+            <div className="pt-2 px-2 bg-destructive rounded-md">
+              {errors.name?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  O nome é obrigatório.
+                </p>
+              )}
+              {errors.file?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A imagem é obrigatória.
+                </p>
+              )}
+              {errors.description?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A descrição é obrigatória.
+                </p>
+              )}
+              {errors.price?.type && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  O preço é obrigatório.
+                </p>
+              )}
+              {errors.category?.type === "validate" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A categoria é obrigatória.
+                </p>
+              )}
             </div>
           )}
           <div className="w-full flex justify-between ">

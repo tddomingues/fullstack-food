@@ -1,10 +1,10 @@
 //components
 import ProductCard from "../../../components/ProductCard";
 import Loading from "../../../components/Loading";
-import { useProduct } from "../../../hooks/useProduct";
+import { useProducts } from "../../../hooks/useProducts";
 
 const AllProducts = () => {
-  const { products, loading } = useProduct();
+  const { products, loading } = useProducts();
 
   if (loading) return <Loading />;
 

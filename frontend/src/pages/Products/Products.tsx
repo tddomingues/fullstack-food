@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 
 //interfaces
 import { UserProps } from "../../interfaces/UserProps";
+import { Toaster } from "../../components/ui/toaster";
+import Footer from "../../components/Footer";
 
 type User = Omit<UserProps, "_id" | "password">;
 
@@ -29,22 +31,21 @@ const Home = () => {
   return (
     <>
       <Navbar />
-
-      <main className="py-0">
+      <main className="py-0 flex-1">
         <div>
           {user?.role === "admin" && (
-            <section className="flex justify-end items-center mb-4">
+            <div className="flex justify-end items-center mb-4">
               <Button
                 onClick={() => navigate("admin-painel/create-product")}
                 variant="secondary"
               >
                 Criar Produto
               </Button>
-            </section>
+            </div>
           )}
 
           <div className="flex gap-4">
-            <article className="w-[240px]">
+            <aside className="w-[240px]">
               <h2 className="bg-neutral-800 mb-4 rounded-md p-4 text-2xl font-medium">
                 Categorias
               </h2>
@@ -96,7 +97,7 @@ const Home = () => {
                   </li>
                 </ul>
               </div>
-            </article>
+            </aside>
 
             <section className="flex-1">
               <h2 className="bg-neutral-800 mb-4 rounded-md p-4 text-2xl font-medium">
@@ -110,7 +111,9 @@ const Home = () => {
             </section>
           </div>
         </div>
+        <Toaster />
       </main>
+      <Footer />
     </>
   );
 };

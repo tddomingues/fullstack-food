@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../../store";
 import { getOrdersByUser } from "../../slice/orderSlice";
@@ -28,9 +28,7 @@ const Orders = () => {
     (state) => state.order.orders,
   );
 
-  console.log(orders);
-
-  const totalPrice = (order) => {
+  const totalPrice = (order: OrderProps) => {
     return order.cart.reduce((prev, curr) => {
       return prev + curr.subTotalPrice;
     }, 0);

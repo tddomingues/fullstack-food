@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
-import dotenv from "dotenv";
-import { orderControllers } from "../controllers/orderControllers";
 
+import dotenv from "dotenv";
 dotenv.config();
+
+//controller
+import { orderControllers } from "../controllers/orderControllers";
 
 const stripe = new Stripe(process.env.STRIPE_API_ACCESS_TOKEN || "");
 
@@ -27,8 +29,6 @@ const webhookStriper = async (request: Request, response: Response) => {
     let cart;
 
     if (eventType === "checkout.session.completed") {
-      console.log(eventType);
-
       await stripe.checkout.sessions
         .listLineItems(data.id)
         .then((res) => {
@@ -51,9 +51,7 @@ const webhookStriper = async (request: Request, response: Response) => {
         cart,
       };
 
-      console.log(order);
-
-      orderControllers.createOrder(order);
+      await orderControllers.createOrder(order);
     }
   } catch (error) {
     console.log(`Error message: ${error.message}`);

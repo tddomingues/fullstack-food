@@ -1,5 +1,9 @@
 import express, { Router } from "express";
+
+//controllers
 import productControllers from "../controllers/productControllers";
+
+//middlewares
 import validation from "../middlewares/validator";
 import productMiddlewares from "../middlewares/productMiddlewares";
 import uploadFile from "../middlewares/uploadMiddleware";

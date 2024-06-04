@@ -1,27 +1,21 @@
 //utils
-import formatCurrency from "../../../utils/formatCurrency";
-
-//hooks
-
-import { useSelector } from "react-redux";
-import { IRootState } from "../../../store";
+import formatCurrency from "../../utils/formatCurrency";
+import { quantityOfProducts, totalPrice } from "../../utils/ManipulateCartInfo";
 
 //router
 import { useNavigate } from "react-router-dom";
 
 //components
+import { Button } from "../../components/ui/button";
 
-import { Button } from "../../../components/ui/button";
+//redux
+import { useSelector } from "react-redux";
+import { IRootState } from "../../store";
+import { IInitialState } from "../../slice/userSlice";
+import { orderService } from "../../service/orderService";
 
-import {
-  quantityOfProducts,
-  totalPrice,
-} from "../../../utils/ManipulateCartInfo";
-
-import { IInitialState } from "../../../slice/userSlice";
-import { CartProps } from "../../../interfaces/CartProps";
-
-import { orderService } from "../../../service/orderService";
+//interface
+import { CartProps } from "../../interfaces/CartProps";
 
 const CheckOrder = () => {
   const navigate = useNavigate();
@@ -44,11 +38,11 @@ const CheckOrder = () => {
 
   return (
     <>
-      <header className="mt-4">
+      <div className="mt-4">
         <Button variant="secondary" onClick={() => navigate("/")}>
           Voltar
         </Button>
-      </header>
+      </div>
       <main className="py-4 flex justify-between gap-4">
         <section className="flex-1">
           <article className="mb-4 bg-neutral-800 p-4 rounded-md ">
@@ -137,7 +131,7 @@ const CheckOrder = () => {
                 variant="destructive"
                 className="w-full"
                 onClick={handlePay}
-                disabled={cart.length === 0}
+                disabled={cart.length === 0 && user === undefined}
               >
                 Meio de Pagamento
               </Button>

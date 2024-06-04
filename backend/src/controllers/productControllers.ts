@@ -26,7 +26,7 @@ const createItem = async (request: Request, response: Response) => {
   } catch (error) {
     return response
       .status(400)
-      .json({ error: "Erro ao criar um item para o cardápio." });
+      .json({ error: ["Erro ao criar um item para o cardápio."] });
   }
 };
 
@@ -36,7 +36,7 @@ const getAllProducts = async (request: Request, response: Response) => {
 
     return response.status(200).json(menu);
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar  o cardápio." });
+    return response.status(400).json({ error: ["Erro ao criar  o cardápio."] });
   }
 };
 
@@ -51,7 +51,7 @@ const getProduct = async (request: Request, response: Response) => {
 
     return response.status(200).json(produto);
   } catch (error) {
-    return response.status(400).json({ error: "Erro ao criar  o cardápio." });
+    return response.status(400).json({ error: ["Erro ao criar  o cardápio."] });
   }
 };
 

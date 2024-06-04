@@ -1,6 +1,9 @@
 import express, { Router } from "express";
-import { orderControllers } from "../controllers/orderControllers";
+
 import webhookStriper from "../config/webhook-striper";
+
+//controllers
+import { orderControllers } from "../controllers/orderControllers";
 
 const router: Router = express.Router();
 

@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 //router
@@ -10,7 +10,11 @@ import { Loader2 } from "lucide-react";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 //redux
-import { createProduct, reset } from "../../../slice/productSlice";
+import {
+  IInitialState,
+  createProduct,
+  reset,
+} from "../../../slice/productSlice";
 import { AppDispatch, IRootState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,7 +22,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../../../components/ui/button";
 
 //hooks
-import { useProduct } from "../../../hooks/useProduct";
 import { ProductProps } from "../../../interfaces/ProductProps";
 
 interface CreateProductProps extends ProductProps {
@@ -28,17 +31,24 @@ interface CreateProductProps extends ProductProps {
 const CreateProducts = () => {
   const [viewImage, setViewImage] = useState("");
 
-  const token = useSelector<IRootState, string | undefined>(
-    (state) => state.user.token,
-  );
+  const token = JSON.parse(Cookies.get("token") || "");
 
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
-  const { error, loading, success } = useProduct();
+  const { error, success, loading } = useSelector<IRootState, IInitialState>(
+    (state) => state.product,
+  );
 
-  const { register, handleSubmit, watch } = useForm<CreateProductProps>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<CreateProductProps>();
+
+  console.log(errors);
 
   const watchFile: FileList = watch("file");
 
@@ -56,7 +66,7 @@ const CreateProducts = () => {
 
     const dataToSend = {
       formData,
-      token: token || "",
+      token: token as string,
     };
 
     dispatch(createProduct(dataToSend));
@@ -83,11 +93,15 @@ const CreateProducts = () => {
           <div className="flex justify-center gap-4 ">
             <div>
               <label className="w-full ">
-                <input type="file" {...register("file")} className="hidden" />
-                <div className=" w-[400px] h-[400px] rounded-md border-neutral-300 bg-neutral-50 cursor-pointer flex justify-center items-center relative">
+                <input
+                  type="file"
+                  {...register("file", { required: true })}
+                  className="hidden"
+                />
+                <div className=" w-[400px] h-[400px] rounded-md border border-dashed border-neutral-300 bg-neutral-800 cursor-pointer flex justify-center items-center relative">
                   <MdOutlineAddPhotoAlternate
                     size={40}
-                    className="text-neutral-800"
+                    className="text-neutral-50"
                   />
                   <img
                     src={viewImage || ""}
@@ -98,35 +112,37 @@ const CreateProducts = () => {
               </label>
             </div>
             <div className="w-full">
-              <div className="flex gap-2">
-                <label className="flex-1">
-                  <span className="block mb-1">Nome</span>
-                  <input
-                    type="text"
-                    {...register("name")}
-                    className="p-2 rounded-md text-sm text-neutral-800 w-full"
-                  />
-                </label>
+              <label>
+                <span className="block mb-1">Nome</span>
+                <input
+                  type="text"
+                  {...register("name", { required: true })}
+                  className="p-2 rounded-md text-sm text-neutral-800 w-full"
+                />
+              </label>
+              <div className="flex gap-2 mt-4">
                 <label>
                   <span className="block mb-1">Preço</span>
                   <input
                     type="number"
-                    {...register("price")}
+                    {...register("price", { required: true })}
                     min={0}
+                    step=".01"
                     className=" p-2 rounded-md text-sm text-neutral-800 w-16"
                   />
                 </label>
                 <label>
                   <span className="block mb-1">Categoria</span>
                   <select
-                    {...register("category")}
+                    {...register("category", {
+                      validate: (value) => {
+                        return value !== "0";
+                      },
+                    })}
                     className=" p-2 rounded-md text-sm text-neutral-800"
                   >
-                    <option value="0" selected>
-                      --Nenhum--
-                    </option>
+                    <option value="0">--Nenhum--</option>
                     <option value="burguer">Hamburguer</option>
-                    <option value="pizza">Pizza</option>
                     <option value="drink">Bebida</option>
                   </select>
                 </label>
@@ -135,7 +151,7 @@ const CreateProducts = () => {
               <label>
                 <span className="block mt-4 mb-1">Descrição</span>
                 <textarea
-                  {...register("description")}
+                  {...register("description", { required: true })}
                   className="w-full p-2 rounded-md text-sm text-neutral-800"
                 ></textarea>
               </label>
@@ -158,6 +174,35 @@ const CreateProducts = () => {
                   {err}
                 </p>
               ))}
+            </div>
+          )}
+          {Object.keys(errors).length > 0 && (
+            <div className="pt-2 px-2 bg-destructive rounded-md">
+              {errors.name?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  O nome é obrigatório.
+                </p>
+              )}
+              {errors.file?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A imagem é obrigatória.
+                </p>
+              )}
+              {errors.description?.type === "required" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A descrição é obrigatória.
+                </p>
+              )}
+              {errors.price?.type && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  O preço é obrigatório.
+                </p>
+              )}
+              {errors.category?.type === "validate" && (
+                <p className="text-sm font-light text-center text-neutral-50 mb-2">
+                  A categoria é obrigatória.
+                </p>
+              )}
             </div>
           )}
           <div className="w-full flex justify-between ">

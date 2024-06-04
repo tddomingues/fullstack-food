@@ -9,17 +9,16 @@ import Drinks from "./pages/Products/Drinks/Drinks";
 import Products from "./pages/Products/Products";
 import Login from "./pages/Auth/Login/Login";
 import Register from "./pages/Auth/Register/Register";
-import Pizzas from "./pages/Products/Pizzas/Pizzas";
 import Burguers from "./pages/Products/Burguers/Burguers";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
-import CheckOrder from "./pages/Payment/CheckOrder/CheckOrder";
+import CheckOrder from "./pages/CheckOrder/CheckOrder";
 import Auth from "./pages/Auth/Auth";
 import CreateProducts from "./pages/AdminPanel/CreateProducts/CreateProducts";
 import EditProduct from "./pages/AdminPanel/EditProduct/EditProduct";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
-import SuccessfulPayment from "./pages/Payment/SuccessfulPayment/SuccessfulPayment";
-import CanceledPayment from "./pages/Payment/CanceledPayment/CanceledPayment";
+import SuccessfulPayment from "./pages/SuccessfulPayment/SuccessfulPayment";
 import Orders from "./pages/Orders/Orders";
+import ProtectNonLoggedRoute from "./components/ProtectNonLoggedRoute";
 
 const AppRouter = createBrowserRouter([
   {
@@ -34,10 +33,7 @@ const AppRouter = createBrowserRouter([
             path: "/",
             element: <AllProducts />,
           },
-          {
-            path: "category/pizza",
-            element: <Pizzas />,
-          },
+
           {
             path: "category/drink",
             element: <Drinks />,
@@ -64,19 +60,23 @@ const AppRouter = createBrowserRouter([
       },
       {
         path: "/check-order",
-        element: <CheckOrder />,
+        element: (
+          <ProtectNonLoggedRoute>
+            <CheckOrder />
+          </ProtectNonLoggedRoute>
+        ),
       },
       {
         path: "/successful-payment",
         element: <SuccessfulPayment />,
       },
       {
-        path: "/canceled-payment",
-        element: <CanceledPayment />,
-      },
-      {
         path: "/orders/:id",
-        element: <Orders />,
+        element: (
+          <ProtectNonLoggedRoute>
+            <Orders />
+          </ProtectNonLoggedRoute>
+        ),
       },
       {
         path: "/",

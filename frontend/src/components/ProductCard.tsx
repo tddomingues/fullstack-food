@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 //utils
 import formatCurrency from "../utils/formatCurrency";
 
-//hooks
-
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, IRootState } from "../store";
@@ -14,7 +12,6 @@ import { deleteProduct } from "../slice/productSlice";
 
 //interfaces
 import { ProductProps } from "../interfaces/ProductProps";
-import { UserProps } from "../interfaces/UserProps";
 import { IInitialState } from "../slice/userSlice";
 
 //componets
@@ -41,8 +38,6 @@ import { firstCapitalLetter } from "../utils/firstCapitalLetter";
 interface ProductsCardProps {
   products: ProductProps[];
 }
-
-//type User = Omit<UserProps, "_id" | "password">;
 
 const ProductCard = ({ products }: ProductsCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
